@@ -1,0 +1,2 @@
+include ':app', ':feature-selection', ':feature-review', ':presentation', ':domain', ':data', ':localdata', ':remotedata', ':android-utils', ':utils'
+rootProject.name='Home24'
