@@ -14,7 +14,6 @@ interface LocalRepository {
     fun getArticlesDatasourceFactory(param: GetArticlesAction.Params): DataSource.Factory<Int, ArticleDomainEntity>
     fun getArticleById(uniqueIdentifier: String): Observable<ArticleDomainEntity>
     fun update(articleEntity: ArticleDomainEntity): Completable
+    fun deleteAllArticles(): Completable
 
-    fun getPreviousRequest(): GetArticlesAction.Params
-    fun updateRequest(param: GetArticlesAction.Params)
 }

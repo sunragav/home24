@@ -86,7 +86,6 @@ class ArticlesRepositoryImpl @Inject constructor(
                             .subscribe {
                                 lastRequestedPage++
                                 isRequestInProgress = false
-                                localRepository.updateRequest(query.copy(offset = lastRequestedPage))
                                 Observable.fromCallable {
                                     networkStateRelay.relay.accept(NetworkState.LOADED)
                                 }.doOnSubscribe{disposable.add(it)}.subscribeOn(foregroundScheduler)
