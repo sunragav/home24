@@ -29,11 +29,7 @@ class ArticlesRepositoryImpl @Inject constructor(
 ) : ArticlesRepository {
 
     override fun getArticle(sku: String): Observable<ArticleDomainEntity> {
-        val localObservable = localRepository.getArticleById(sku)
-        val remoteObservable = remoteRepository.getArticleById(sku).doOnNext{ entity ->
-            updateArticle(entity).doOnSubscribe{disposable.add(it)}.subscribe()
-        }
-        return Observable.concat(localObservable, remoteObservable).firstOrError().toObservable()
+        return localRepository.getArticleById(sku)
     }
 
     override fun getArticles(query: GetArticlesAction.Params): GetArticlesActionResult {
