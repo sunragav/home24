@@ -5,6 +5,7 @@ import com.sunragav.home24.data.contract.LocalRepository
 import com.sunragav.home24.data.contract.RemoteRepository
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.verify
 import io.reactivex.Completable
 import io.reactivex.Observable
 import org.junit.Before
@@ -36,12 +37,10 @@ class ArticlesRepositoryImplTest {
         every {
             localRepository.getArticleById(any())
         }.returns(Observable.just(articles))
-        every {
-            remoteRepository.getArticleById(any())
-        }.returns(Observable.just(articles))
 
         val articlesObservable = articlesRepositoryImpl.getArticle(SEARCH_KEY)
         val testObserver = articlesObservable.test()
+        verify (exactly = 1){  localRepository.getArticleById(any())}
         testObserver
             .assertSubscribed()
             .assertValue { it == articles }
@@ -51,38 +50,20 @@ class ArticlesRepositoryImplTest {
 
     @Test
     fun test_getArticle_error() {
-        val articles = getArticle()
-
         //Should fail when local db errors
         every {
             localRepository.getArticleById(any())
         } returns (Observable.error(Throwable(ERROR)))
-        every {
-            remoteRepository.getArticleById(any())
-        }.returns(Observable.just(articles))
+
         val articlesObservable = articlesRepositoryImpl.getArticle(SEARCH_KEY)
 
-        var testObserver = articlesObservable.test()
+        val testObserver = articlesObservable.test()
+        verify (exactly = 1){  localRepository.getArticleById(any())}
         testObserver
             .assertSubscribed()
             .assertError { it.message?.equals(ERROR, false) ?: false }
             .assertNotComplete()
 
-
-        //Should not fail when remote service errors but local db has value, because
-        //when local db has data there is no need for the remote service call
-        every {
-            localRepository.getArticleById(any())
-        } returns (Observable.just(articles))
-        every {
-            remoteRepository.getArticleById(any())
-        } returns (Observable.error(Throwable(ERROR)))
-
-        testObserver = articlesRepositoryImpl.getArticle(SEARCH_KEY).test()
-        testObserver
-            .assertSubscribed()
-            .assertNoErrors()
-            .assertComplete()
     }
 
     @Test

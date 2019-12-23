@@ -9,5 +9,4 @@ interface RemoteRepository {
          lastRequestedPage: Int, limit: Int
     ): Single<List<ArticleDomainEntity>>
 
-    fun getArticleById(uniqueIdentifier: String): Observable<ArticleDomainEntity>
 }
