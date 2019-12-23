@@ -78,16 +78,15 @@ class ArticlesDAOTest {
 
         articlesListDAO.insert(listOf(article)).test()
         assertThat(article.flagged, equalTo(true))
+        assertThat(article.sku, equalTo("143"))
 
-        articlesListDAO.update(article.copy(sku = "123", flagged = false))
+        articlesListDAO.update(article.copy( flagged = false)).test()
 
-
-
-        articlesListDAO.getArticleById(article.sku)
+        articlesListDAO.getArticleById("143")
             .test()
             .assertSubscribed()
             .assertValue {
-                !it.flagged && it.sku == "123"
+                it.flagged.not()
             }
             .assertNotComplete() // As Room Observables are kept alive
 
@@ -107,7 +106,7 @@ class ArticlesDAOTest {
         assertThat(result.size, equalTo(articlesList.size))
 
 
-        articlesListDAO.clearArticlesFromTable()
+        articlesListDAO.clearArticlesFromTable().test()
 
         result = (articlesListDAO.getArticles().create() as LimitOffsetDataSource).loadRange(
             0,
