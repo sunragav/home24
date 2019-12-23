@@ -1,6 +1,6 @@
 package com.sunragav.home24.domain.usecases
 
-import com.sunragav.home24.domain.models.ArticleEntity
+import com.sunragav.home24.domain.models.ArticleDomainEntity
 import com.sunragav.home24.domain.qualifiers.Background
 import com.sunragav.home24.domain.qualifiers.Foreground
 import com.sunragav.home24.domain.repository.ArticlesRepository
@@ -14,9 +14,9 @@ class GetArticleAction @Inject constructor(
     private val articlesRepository: ArticlesRepository,
     @Background backgroundScheduler: Scheduler,
     @Foreground foregroundScheduler: Scheduler
-) : ObservableUseCase<ArticleEntity, String>(backgroundScheduler, foregroundScheduler) {
+) : ObservableUseCase<ArticleDomainEntity, String>(backgroundScheduler, foregroundScheduler) {
 
-    override fun generateObservable(input: String): Observable<ArticleEntity> {
+    override fun generateObservable(input: String): Observable<ArticleDomainEntity> {
         return articlesRepository.getArticle(input)
     }
 }

@@ -2,7 +2,7 @@ package com.sunragav.home24.domain.usecases
 
 import androidx.paging.DataSource
 import androidx.paging.PagedList
-import com.sunragav.home24.domain.models.ArticleEntity
+import com.sunragav.home24.domain.models.ArticleDomainEntity
 import com.sunragav.home24.domain.repository.ArticlesRepository
 import javax.inject.Inject
 
@@ -25,8 +25,8 @@ class GetArticlesAction @Inject constructor(
     }
 
     class GetArticlesActionResult(
-        val dataSource: DataSource.Factory<Int, ArticleEntity>,
-        val boundaryCallback: PagedList.BoundaryCallback<ArticleEntity>
+        val dataSource: DataSource.Factory<Int, ArticleDomainEntity>,
+        val boundaryCallback: PagedList.BoundaryCallback<ArticleDomainEntity>
     )
 
 
