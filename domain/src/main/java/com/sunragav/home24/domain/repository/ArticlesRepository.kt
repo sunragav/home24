@@ -11,7 +11,5 @@ interface ArticlesRepository {
 
     fun getArticles(query: GetArticlesAction.Params): GetArticlesActionResult
 
-    fun getFavoriteArticles(): GetArticlesActionResult
-
     fun updateArticle(articleDomainEntity: ArticleDomainEntity): Completable
 }
