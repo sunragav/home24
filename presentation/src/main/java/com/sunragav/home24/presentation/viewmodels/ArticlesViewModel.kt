@@ -11,7 +11,7 @@ import kotlinx.coroutines.*
 import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
 
-open class HomeVM @Inject internal constructor(
+open class ArticlesViewModel @Inject internal constructor(
     private val getArticlesAction: GetArticlesAction
 ) : ViewModel(), CoroutineScope {
     companion object {

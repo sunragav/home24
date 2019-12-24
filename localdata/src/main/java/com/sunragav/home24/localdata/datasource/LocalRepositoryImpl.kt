@@ -23,12 +23,12 @@ class LocalRepositoryImpl @Inject constructor(
     }
 
     override fun getArticlesDatasourceFactory(param: GetArticlesAction.Params): DataSource.Factory<Int, ArticleDomainEntity> {
-        return (if (param.flagged) articlesDao.getFavorites() else articlesDao.getArticles(
-        )).map { articleLocalDataMapper.from(it) }
+        return (if (param.flagged) articlesDao.getFavorites() else articlesDao.getArticles())
+            .map { articleLocalDataMapper.from(it) }
     }
 
     override fun getArticleById(uniqueIdentifier: String): Observable<ArticleDomainEntity> {
-       return articlesDao.getArticleById(uniqueIdentifier).map { articleLocalDataMapper.from(it) }
+        return articlesDao.getArticleById(uniqueIdentifier).map { articleLocalDataMapper.from(it) }
     }
 
     override fun update(articleEntity: ArticleDomainEntity): Completable {
