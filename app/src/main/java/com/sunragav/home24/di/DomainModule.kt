@@ -1,7 +1,9 @@
 package com.sunragav.home24.di
 
+import com.sunragav.home24.BuildConfig
 import com.sunragav.home24.domain.qualifiers.Background
 import com.sunragav.home24.domain.qualifiers.Foreground
+import com.sunragav.home24.domain.qualifiers.ReviewCount
 import dagger.Module
 import dagger.Provides
 import io.reactivex.Scheduler
@@ -29,4 +31,10 @@ class DomainModule {
     @Singleton
     @Provides
     fun provideCompoisteDisposable() = CompositeDisposable()
+
+    @Singleton
+    @Provides
+    @ReviewCount
+    fun providesReviewCount() = BuildConfig.REVIEW_COUNT
+
 }

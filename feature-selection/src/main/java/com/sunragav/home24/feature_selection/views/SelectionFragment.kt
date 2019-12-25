@@ -1,26 +1,174 @@
 package com.sunragav.home24.feature_selection.views
 
 
+import android.content.Context
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-
+import android.widget.Toast
+import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
+import androidx.viewpager2.widget.ViewPager2
 import com.sunragav.feature_selection.R
+import com.sunragav.feature_selection.databinding.FragmentSelectionBinding
+import com.sunragav.home24.domain.models.RepositoryState
+import com.sunragav.home24.domain.models.RepositoryState.Companion.CONNECTED
+import com.sunragav.home24.domain.models.RepositoryState.Companion.DB_ERROR
+import com.sunragav.home24.domain.models.RepositoryState.Companion.DB_LOADED
+import com.sunragav.home24.domain.models.RepositoryState.Companion.DISCONNECTED
+import com.sunragav.home24.domain.models.RepositoryState.Companion.EMPTY
+import com.sunragav.home24.domain.models.RepositoryState.Companion.ERROR
+import com.sunragav.home24.domain.models.RepositoryState.Companion.LOADED
+import com.sunragav.home24.domain.models.RepositoryState.Companion.LOADING
+import com.sunragav.home24.domain.models.RepositoryState.Companion.UI_LOADED
+import com.sunragav.home24.domain.models.RepositoryStateRelay
+import com.sunragav.home24.feature_selection.mappers.ArticleUIModelMapper
+import com.sunragav.home24.feature_selection.viewpager.adapter.PagedArticlesAdapter
+import com.sunragav.home24.feature_selection.views.listeners.ClickListener
+import com.sunragav.home24.presentation.factory.ArticlesViewModelFactory
+import com.sunragav.home24.presentation.viewmodels.ArticlesViewModel
+import dagger.android.support.AndroidSupportInjection
+import io.reactivex.disposables.CompositeDisposable
+import javax.inject.Inject
 
-/**
- * A simple [Fragment] subclass.
- */
+
 class SelectionFragment : Fragment() {
+    @Inject
+    lateinit var viewModelFactory: ArticlesViewModelFactory
+
+    @Inject
+    lateinit var repositoryStateRelay: RepositoryStateRelay
+
+    @Inject
+    lateinit var disposable: CompositeDisposable
+
+    lateinit var viewModel: ArticlesViewModel
+
+    lateinit var pagedArticlesAdapter: PagedArticlesAdapter
+
+    lateinit var viewPager: ViewPager2
+
+    override fun onAttach(context: Context) {
+        AndroidSupportInjection.inject(this)
+        super.onAttach(context)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        activity?.let {
+            viewModel =
+                ViewModelProviders.of(it, viewModelFactory).get(ArticlesViewModel::class.java)
+        }
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_selection, container, false)
+        val binding = DataBindingUtil.inflate<FragmentSelectionBinding>(
+            inflater,
+            R.layout.fragment_selection,
+            container,
+            false
+        )
+        viewPager = binding.vpArticles
+
+        binding.viewModel = viewModel
+
+        initViewModel()
+
+        initViewPager()
+
+
+        initAdapter()
+
+        startListeningToRepoState()
+
+        binding.clickListener = ClickListener(
+            viewPager = viewPager,
+            viewModel = viewModel
+        )
+
+        return binding.root
     }
 
+    private fun startListeningToRepoState() {
+        val subscription = repositoryStateRelay.relay.subscribe {
+            when (it) {
+                LOADING -> viewModel.isLoading.set(true)
+                LOADED -> {
+                    viewModel.isLoading.set(false)
+                }
+                DISCONNECTED -> {
+                    Toast.makeText(
+                        activity,
+                        R.string.network_lost,
+                        Toast.LENGTH_LONG
+                    )
+                }
+                DB_ERROR -> {
+                    Toast.makeText(
+                        activity,
+                        R.string.network_lost,
+                        Toast.LENGTH_LONG
+                    )
+                }
+                CONNECTED -> {
+                    if (viewModel.isLoading.get() == true) {
+                        viewModel.getModels()
+                    }
+                }
+                ERROR -> {
+                    viewModel.isLoading.set(false)
+                    Toast.makeText(
+                        activity,
+                        R.string.network_error,
+                        Toast.LENGTH_LONG
+                    )
+                        .show()
+                }
+                EMPTY -> {
+                    val count = pagedArticlesAdapter.currentList?.size ?: 0
+                    if (count == 0)
+                        viewModel.isLoading.set(true)
+                    viewModel.getModels()
+                }
+            }
+
+        }
+        disposable.add(subscription)
+    }
+
+    private fun initViewModel() {
+        viewModel.init()
+        viewModel.currentItem.observe(this, Observer {
+            if(it==0) viewModel.canShowUndo.set(false)
+        })
+    }
+
+    private fun initViewPager() {
+        viewPager.isUserInputEnabled = false
+    }
+
+    private fun initAdapter() {
+        pagedArticlesAdapter = PagedArticlesAdapter(
+            ArticleUIModelMapper()
+        )
+        viewPager.adapter = pagedArticlesAdapter
+        viewModel.articlesListSource.observe(this, Observer {
+            if (it.size > 0) {
+                repositoryStateRelay.relay.accept(UI_LOADED)
+                viewModel.isLoading.set(false)
+                pagedArticlesAdapter.submitList(it)
+                viewModel.articlesCount.postValue(pagedArticlesAdapter.itemCount)
+            }
+        })
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        viewModel.articlesListSource.removeObservers(this)
+        disposable.dispose()
+    }
 
 }

@@ -12,3 +12,8 @@ annotation class Background
 @MustBeDocumented
 @Retention(AnnotationRetention.RUNTIME)
 annotation class Foreground
+
+@Qualifier
+@MustBeDocumented
+@Retention(AnnotationRetention.RUNTIME)
+annotation class ReviewCount

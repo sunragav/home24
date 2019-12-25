@@ -46,7 +46,7 @@ class ArticlesDAOTest {
 
     @After
     fun tearDown() {
-        articlesListDAO.clearArticlesFromTable()
+        articlesListDAO.clearLikesFromArticles()
         articlesDB.close()
     }
 
@@ -106,7 +106,7 @@ class ArticlesDAOTest {
         assertThat(result.size, equalTo(articlesList.size))
 
 
-        articlesListDAO.clearArticlesFromTable().test()
+        articlesListDAO.clearLikesFromArticles().test()
 
         result = (articlesListDAO.getArticles().create() as LimitOffsetDataSource).loadRange(
             0,

@@ -4,6 +4,7 @@ import androidx.paging.DataSource
 import com.sunragav.home24.domain.models.ArticleDomainEntity
 import com.sunragav.home24.domain.usecases.GetArticlesAction
 import io.reactivex.Completable
+import io.reactivex.Maybe
 import io.reactivex.Observable
 
 interface LocalRepository {
@@ -14,6 +15,9 @@ interface LocalRepository {
     fun getArticlesDatasourceFactory(param: GetArticlesAction.Params): DataSource.Factory<Int, ArticleDomainEntity>
     fun getArticleById(uniqueIdentifier: String): Observable<ArticleDomainEntity>
     fun update(articleEntity: ArticleDomainEntity): Completable
-    fun deleteAllArticles(): Completable
+    fun clearAllLikes(): Maybe<Int>
 
+    fun getPreviousRequest(): Maybe<Request>
+    fun updatePreviousRequest(request: Request): Completable
+    fun clearPreviousRequest():Completable
 }

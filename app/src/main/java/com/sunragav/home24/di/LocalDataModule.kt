@@ -34,4 +34,10 @@ class LocalDataModule {
         articlesDB: ArticlesDB
     ) = articlesDB.getArticlesDao()
 
+    @Provides
+    @Singleton
+    fun providesRequestDao(
+        articlesDB: ArticlesDB
+    ) = articlesDB.getRequestsDao()
+
 }

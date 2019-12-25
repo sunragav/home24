@@ -6,10 +6,12 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.sunragav.home24.localdata.dao.ArticlesDao
+import com.sunragav.home24.localdata.dao.RequestDao
 import com.sunragav.home24.localdata.models.ArticleLocalData
+import com.sunragav.home24.localdata.models.Request
 
 @Database(
-    entities = [ArticleLocalData::class],
+    entities = [ArticleLocalData::class, Request::class],
     version = 1,
     exportSchema = false
 )
@@ -38,6 +40,7 @@ abstract class ArticlesDB : RoomDatabase() {
     }
 
     abstract fun getArticlesDao(): ArticlesDao
+    abstract fun getRequestsDao(): RequestDao
 
 }
 

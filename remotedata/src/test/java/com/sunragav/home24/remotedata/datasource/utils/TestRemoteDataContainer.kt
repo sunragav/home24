@@ -18,7 +18,8 @@ class TestRemoteDataContainer {
             return ArticleDomainEntity(
                 sku="143",
                imageUrl = "Fake image",
-                flagged = false
+                flagged = false,
+                title = "Fake title"
             )
         }
 
@@ -31,7 +32,7 @@ class TestRemoteDataContainer {
 
         fun getDataWrapper(articles: List<ArticleRemoteData>? = null): DataWrapper<List<ArticleRemoteData>> {
             return DataWrapper(
-                embedded = Embedded(articles?.let { it } ?: getArticleRemoteDatasList())
+                _embedded = Embedded(articles?.let { it } ?: getArticleRemoteDatasList())
             )
         }
     }

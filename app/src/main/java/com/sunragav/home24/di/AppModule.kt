@@ -4,7 +4,8 @@ import android.app.Application
 import android.content.Context
 import com.sunragav.home24.feature_review.views.ReviewFragment
 import com.sunragav.home24.feature_selection.views.SelectionFragment
-import com.sunragav.home24.views.FeatureActivity
+import com.sunragav.home24.feature_selection.views.FeatureActivity
+import com.sunragav.home24.feature_selection.views.StartFragment
 import com.sunragav.home24.views.SplashActivity
 import dagger.Binds
 import dagger.Module
@@ -24,6 +25,9 @@ abstract class AppModule {
 
     @ContributesAndroidInjector
     internal abstract fun contributesSelectionFeautreFragment(): SelectionFragment
+
+    @ContributesAndroidInjector
+    internal abstract fun contributesStartFragment(): StartFragment
 
     @ContributesAndroidInjector
     internal abstract fun contributesReviewFeautreFragment(): ReviewFragment

@@ -62,7 +62,9 @@ dependencies {
     implementation "com.google.dagger:dagger:$daggerVersion"
     implementation "com.google.dagger:dagger-android:$daggerVersion"
     implementation "com.google.dagger:dagger-android-support:$daggerVersion"
-
+    implementation "com.squareup.retrofit2:converter-moshi:$moshiRetrofitVersion"
+    implementation "com.squareup.moshi:moshi:$moshiVersion"
+    implementation "com.squareup.moshi:moshi-kotlin:$moshiVersion"
     kapt "com.google.dagger:dagger-compiler:$daggerVersion"
     kapt "com.google.dagger:dagger-android-processor:$daggerVersion"
 
@@ -72,6 +74,9 @@ dependencies {
     implementation "com.squareup.retrofit2:adapter-rxjava2:$retrofit2Version"
     implementation "com.squareup.okhttp3:okhttp:$okhttpVersion"
     implementation "com.squareup.okhttp3:logging-interceptor:$okhttpVersion"
+    implementation "com.squareup.retrofit2:converter-moshi:$moshiRetrofitVersion"
+    implementation "com.squareup.moshi:moshi:$moshiVersion"
+    implementation "com.squareup.moshi:moshi-kotlin:$moshiVersion"
 
 
     // Room
@@ -105,7 +110,7 @@ dependencies {
 
     implementation "com.jakewharton.rxrelay2:rxrelay:$rxRelayVersion"
 
-
+    implementation "org.jetbrains.kotlin:kotlin-reflect:1.1.0"
     testImplementation 'junit:junit:4.12'
     androidTestImplementation "org.mockito:mockito-core:$mockitoVersion"
     androidTestImplementation "androidx.test:runner:$testRunnerVersion"

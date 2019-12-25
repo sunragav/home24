@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="detail_content_margin">0dp</dimen>
+
+    <dimen name="card_view_elevation">6dp</dimen>
+    <dimen name="card_view_radius">20dp</dimen>
+
+    <dimen name="like_button_size">50dp</dimen>
+    <dimen name="card_view_review_count_width">90dp</dimen>
+    <dimen name="card_view_review_count_radius">30dp</dimen>
+    <dimen name="bottom_pane_height">60dp</dimen>
+    <dimen name="like_button_margin_top">16dp</dimen>
+</resources>

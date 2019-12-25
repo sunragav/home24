@@ -3,15 +3,17 @@ package com.sunragav.home24.data
 import androidx.paging.PagedList
 import com.sunragav.home24.data.contract.LocalRepository
 import com.sunragav.home24.data.contract.RemoteRepository
+import com.sunragav.home24.data.contract.Request
 import com.sunragav.home24.domain.models.ArticleDomainEntity
-import com.sunragav.home24.domain.models.NetworkState
-import com.sunragav.home24.domain.models.NetworkStateRelay
+import com.sunragav.home24.domain.models.RepositoryState
+import com.sunragav.home24.domain.models.RepositoryStateRelay
 import com.sunragav.home24.domain.qualifiers.Background
 import com.sunragav.home24.domain.qualifiers.Foreground
 import com.sunragav.home24.domain.repository.ArticlesRepository
 import com.sunragav.home24.domain.usecases.GetArticlesAction
 import com.sunragav.home24.domain.usecases.GetArticlesAction.GetArticlesActionResult
 import io.reactivex.Completable
+import io.reactivex.Maybe
 import io.reactivex.Observable
 import io.reactivex.Scheduler
 import io.reactivex.disposables.CompositeDisposable
@@ -23,7 +25,7 @@ class ArticlesRepositoryImpl @Inject constructor(
     val disposable: CompositeDisposable,
     val localRepository: LocalRepository,
     val remoteRepository: RemoteRepository,
-    val networkStateRelay: NetworkStateRelay,
+    val repositoryStateRelay: RepositoryStateRelay,
     @Foreground val foregroundScheduler: Scheduler,
     @Background val backgroundScheduler: Scheduler
 ) : ArticlesRepository {
@@ -43,6 +45,11 @@ class ArticlesRepositoryImpl @Inject constructor(
         return localRepository.update(articleDomainEntity)
     }
 
+    override fun clearAllLikes(): Maybe<Int> {
+        return localRepository.clearAllLikes()
+    }
+
+
     inner class ArticlesBoundaryCallback(
         private val query: GetArticlesAction.Params
     ) : PagedList.BoundaryCallback<ArticleDomainEntity>() {
@@ -52,52 +59,84 @@ class ArticlesRepositoryImpl @Inject constructor(
 
         private var isRequestInProgress = false
 
-        override fun onZeroItemsLoaded() = requestAndSaveData(query)
+        override fun onZeroItemsLoaded() = requestAndSaveData()
 
         override fun onItemAtEndLoaded(itemAtEnd: ArticleDomainEntity) =
-            requestAndSaveData(query)
+            requestAndSaveData()
 
-        private fun requestAndSaveData(query: GetArticlesAction.Params) {
+        private fun requestAndSaveData() {
 
             if (isRequestInProgress) {
                 return
             }
-            networkStateRelay.relay.accept(NetworkState.LOADING)
+            repositoryStateRelay.relay.accept(RepositoryState.LOADING)
             println("Requesting page$lastRequestedPage")
             isRequestInProgress = true
+
+            localRepository.getPreviousRequest()
+                .subscribeOn(backgroundScheduler)
+                .doOnError {
+                    updateRepoFromRemote()
+                }
+                .doOnSuccess {
+                    lastRequestedPage = it.offset
+                    updateRepoFromRemote()
+                }
+                .doOnComplete {
+                    updateRepoFromRemote()
+                }
+                .doOnSubscribe { disposable.add(it) }
+                .subscribe()
+
+        }
+
+        private fun updateRepoFromRemote() {
             disposable.add(
                 remoteRepository.getArticles(
                     lastRequestedPage,
                     query.limit
                 ).subscribeOn(backgroundScheduler)
                     .observeOn(backgroundScheduler)
-                    .doOnSubscribe{disposable.add(it)}
-                    .retry(1)
+                    .doOnSubscribe { disposable.add(it) }
                     .subscribe(
-                    { articles ->
-                        println("Loaded page$lastRequestedPage offset:${lastRequestedPage * query.limit}")
-                        localRepository.insert(articles)
-                            .subscribeOn(backgroundScheduler)
-                            .observeOn(backgroundScheduler)
-                            .subscribe {
-                                lastRequestedPage++
-                                isRequestInProgress = false
-                                Observable.fromCallable {
-                                    networkStateRelay.relay.accept(NetworkState.LOADED)
-                                }.doOnSubscribe{disposable.add(it)}.subscribeOn(foregroundScheduler)
-                                    .retry(1)
-                                    .subscribe()
-                            }
-                    },
-                    { error ->
-                        Observable.fromCallable {
-                            networkStateRelay.relay.accept(NetworkState.error(error.localizedMessage))
-                        }.subscribeOn(foregroundScheduler)
-                            .subscribe()
-                        isRequestInProgress = false
-                    })
+                        { articles ->
+                            println("Loaded page$lastRequestedPage offset:${lastRequestedPage * query.limit}")
+                            insertDB(articles)
+                        },
+                        { error ->
+                            setRepositoryState(RepositoryState.error(error.localizedMessage))
+                        })
             )
+        }
 
+        private fun insertDB(articles: List<ArticleDomainEntity>) {
+            localRepository.insert(articles)
+                .subscribeOn(backgroundScheduler)
+                .observeOn(backgroundScheduler)
+                .doOnSubscribe { disposable.add(it) }
+                .doOnError {
+                    setRepositoryState(RepositoryState.DB_ERROR)
+                }
+                .andThen {
+                    lastRequestedPage++
+                    setRepositoryState(RepositoryState.DB_LOADED)
+                    localRepository.updatePreviousRequest(
+                        Request(
+                            0,
+                            lastRequestedPage,
+                            query.limit
+                        )
+                    )
+                }.subscribe()
+        }
+
+        private fun setRepositoryState(repositoryState: RepositoryState) {
+            isRequestInProgress = false
+            Observable.fromCallable {
+                repositoryStateRelay.relay.accept(repositoryState)
+            }.doOnSubscribe { disposable.add(it) }.subscribeOn(foregroundScheduler)
+                .retry(1)
+                .subscribe()
         }
     }
 }

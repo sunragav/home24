@@ -4,6 +4,7 @@ import androidx.paging.DataSource
 import androidx.room.*
 import com.sunragav.home24.localdata.models.ArticleLocalData
 import io.reactivex.Completable
+import io.reactivex.Maybe
 import io.reactivex.Observable
 
 
@@ -11,7 +12,7 @@ import io.reactivex.Observable
 interface ArticlesDao {
 
     @Query(
-        "SELECT * FROM articles"
+        "SELECT * FROM articles order by sku"
     )
     fun getArticles(): DataSource.Factory<Int, ArticleLocalData>
 
@@ -24,12 +25,13 @@ interface ArticlesDao {
     @Update
     fun update(articleLocalData: ArticleLocalData): Completable
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(articlesList: List<ArticleLocalData>): Completable
 
-    @Query("SELECT * FROM articles WHERE sku = :id")
+    @Query("SELECT * FROM articles WHERE sku = :id limit 1")
     fun getArticleById(id: String): Observable<ArticleLocalData>
 
-    @Query("DELETE FROM articles")
-    fun clearArticlesFromTable(): Completable
+    @Query("UPDATE articles set is_flagged = 0 where is_flagged = 1")
+    //@Query("DELETE FROM articles")
+    fun clearLikesFromArticles():  Maybe<Int>
 }

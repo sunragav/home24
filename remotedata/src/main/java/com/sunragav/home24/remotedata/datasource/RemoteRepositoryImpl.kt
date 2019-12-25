@@ -15,14 +15,15 @@ class RemoteRepositoryImpl @Inject constructor(
     private val articleRemoteDataMapper: ArticleRemoteDataMapper,
     @Background private val backgroundThread: Scheduler
 
-):RemoteRepository {
+) : RemoteRepository {
     override fun getArticles(
         lastRequestedPage: Int,
         limit: Int
     ): Single<List<ArticleDomainEntity>> {
-        return articleService.getArticles(lastRequestedPage,limit)
+        return articleService.getArticles(lastRequestedPage * limit, limit)
             .map { dataWrapper ->
-                dataWrapper.embedded.articles
-                .map { articleRemoteDataMapper.from(it) } }.subscribeOn(backgroundThread)
+                dataWrapper._embedded.articles
+                    .map { articleRemoteDataMapper.from(it) }
+            }.subscribeOn(backgroundThread)
     }
 }

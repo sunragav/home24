@@ -4,5 +4,5 @@
     <string name="filter_view_http_articles">https://api-mobile.home24.com/api/v2.0/categories/100/articles</string>
     <string name="filter_view_articles">home24</string>
 
-    <string name="nav_host_fragment">nav host fragment</string>
+    <string name="start_fragment">start fragment</string>
 </resources>

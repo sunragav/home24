@@ -1,9 +1,10 @@
 package com.sunragav.home24.di
 
+import com.squareup.moshi.Moshi
 import com.sunragav.home24.BuildConfig
 import com.sunragav.home24.data.contract.RemoteRepository
-import com.sunragav.home24.remotedata.Qualifiers.AppDomain
-import com.sunragav.home24.remotedata.Qualifiers.Locale
+import com.sunragav.home24.remotedata.qualifiers.AppDomain
+import com.sunragav.home24.remotedata.qualifiers.Locale
 import com.sunragav.home24.remotedata.api.ArticleService
 import com.sunragav.home24.remotedata.datasource.RemoteRepositoryImpl
 import com.sunragav.home24.remotedata.http.ApiInterceptor
@@ -15,6 +16,7 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.converter.moshi.MoshiConverterFactory
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
@@ -32,23 +34,25 @@ class RemoteDataModule {
 
     @Provides
     @Locale
-    fun providePublicKey() = BuildConfig.LOCALE
+    fun provideLocale() = BuildConfig.LOCALE
 
     @Provides
     @AppDomain
-    fun providePrivateKey() = BuildConfig.APP_DOMAIN
+    fun provideAppDomain() = BuildConfig.APP_DOMAIN
 
 
     @Provides
+    @Singleton
     fun provideArticlesService(retrofit: Retrofit): ArticleService =
         retrofit.create(ArticleService::class.java)
 
 
     @Provides
-    fun providesRetrofit(okHttpClient: OkHttpClient): Retrofit =
+    @Singleton
+    fun providesRetrofit(okHttpClient: OkHttpClient, moshi:Moshi): Retrofit =
         Retrofit.Builder()
             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-            .addConverterFactory(GsonConverterFactory.create())
+            .addConverterFactory(MoshiConverterFactory.create(moshi))
             .client(okHttpClient)
             .baseUrl(BuildConfig.BASE_URL)
             .build()
@@ -66,6 +70,12 @@ class RemoteDataModule {
             .connectTimeout(60, TimeUnit.SECONDS)
             .readTimeout(60, TimeUnit.SECONDS)
             .writeTimeout(60, TimeUnit.SECONDS).build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideMoshi(): Moshi {
+        return Moshi.Builder().build()
     }
 
     private fun getInterceptorLevel(): HttpLoggingInterceptor.Level? {
