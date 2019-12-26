@@ -13,5 +13,6 @@ class FeatureActivity : AppCompatActivity() {
         setContentView(R.layout.activity_feature)
         findNavController(R.id.nav_container).navigate(R.id.startFragment)
     }
+
 }
 

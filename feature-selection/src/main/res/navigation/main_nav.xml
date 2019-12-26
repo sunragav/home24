@@ -17,7 +17,7 @@
         <action
             android:id="@+id/action_selectionFragment_to_startFragment"
             app:destination="@id/startFragment"
-            app:popUpTo="@id/startFragment"
+            app:popUpTo="@+id/main_nav"
             app:popUpToInclusive="true" />
     </fragment>
     <fragment
@@ -36,6 +36,7 @@
         tools:layout="@layout/fragment_start" >
         <action
             android:id="@+id/action_startFragment_to_selectionFragment"
-            app:destination="@id/selectionFragment" />
+            app:destination="@id/selectionFragment"
+            app:popUpTo="@+id/selectionFragment" />
     </fragment>
 </navigation>

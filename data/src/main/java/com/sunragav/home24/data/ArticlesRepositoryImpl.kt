@@ -66,28 +66,11 @@ class ArticlesRepositoryImpl @Inject constructor(
 
         private fun requestAndSaveData() {
 
-            if (isRequestInProgress) {
-                return
-            }
+            if (isRequestInProgress) return
             repositoryStateRelay.relay.accept(RepositoryState.LOADING)
             println("Requesting page$lastRequestedPage")
             isRequestInProgress = true
-
-            localRepository.getPreviousRequest()
-                .subscribeOn(backgroundScheduler)
-                .doOnError {
-                    updateRepoFromRemote()
-                }
-                .doOnSuccess {
-                    lastRequestedPage = it.offset
-                    updateRepoFromRemote()
-                }
-                .doOnComplete {
-                    updateRepoFromRemote()
-                }
-                .doOnSubscribe { disposable.add(it) }
-                .subscribe()
-
+            updateRepoFromRemote()
         }
 
         private fun updateRepoFromRemote() {

@@ -43,26 +43,8 @@ open class ArticlesViewModel @Inject internal constructor(
     val isLoading = ObservableField<Boolean>()
     val isReadyToReview = ObservableField<Boolean>()
     val canShowUndo = ObservableField<Boolean>()
-    private val likesCount = ObservableField<Int>()
     val reviewText = ObservableField<String>()
 
-    private val reviewCount: Int = reviewCountStr.toInt()
-
-    override val coroutineContext: CoroutineContext
-        get() = Dispatchers.Main + viewModelJob
-    private val viewModelJob = SupervisorJob()
-    private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
-    private val bgScope = Dispatchers.IO
-
-
-    private var normalRequestParam = GetArticlesAction.Params(limit = LIMIT)
-    private var favoritesRequestParam = GetArticlesAction.Params(limit = LIMIT, flagged = true)
-
-    private val pagingConfig = PagedList.Config.Builder()
-        .setEnablePlaceholders(true)
-        .setInitialLoadSizeHint(LIMIT)
-        .setPageSize(LIMIT)
-        .build()
 
 
     val articlesCount = MutableLiveData<Int>()
@@ -75,17 +57,37 @@ open class ArticlesViewModel @Inject internal constructor(
     val articlesListSource: LiveData<PagedList<ArticleDomainEntity>>
         get() = Transformations.switchMap(pagedListMediator) { it }
 
-    private val pagedListMediator = MediatorLiveData<LiveData<PagedList<ArticleDomainEntity>>>()
+
+
+
+    override val coroutineContext: CoroutineContext
+        get() = Dispatchers.Main + viewModelJob
+
+
+    private val viewModelJob = SupervisorJob()
+    private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
+    private val bgScope = Dispatchers.IO
+
+    private val likesCount = ObservableField<Int>()
+    private val reviewCount: Int = reviewCountStr.toInt()
+
+    private var normalRequestParam = GetArticlesAction.Params(limit = LIMIT)
+    private var favoritesRequestParam = GetArticlesAction.Params(limit = LIMIT, flagged = true)
     private val filterRequestLiveData = MutableLiveData<GetArticlesAction.Params>()
-    private lateinit var dataSourceFactory: DataSource.Factory<Int, ArticleDomainEntity>
+
+    private val pagingConfig = PagedList.Config.Builder()
+        .setEnablePlaceholders(true)
+        .setInitialLoadSizeHint(LIMIT)
+        .setPageSize(LIMIT)
+        .build()
+
+    private val pagedListMediator = MediatorLiveData<LiveData<PagedList<ArticleDomainEntity>>>()
 
     init {
-        init()
         pagedListMediator.addSource(filterRequestLiveData) { param ->
             uiScope.launch {
                 withContext(bgScope) {
                     with(getArticlesAction.buildUseCase(param)) {
-                        dataSourceFactory = dataSource
                         pagedListMediator.postValue(
                             LivePagedListBuilder(dataSource, pagingConfig)
                                 .setBoundaryCallback(boundaryCallback)
@@ -95,11 +97,9 @@ open class ArticlesViewModel @Inject internal constructor(
                 }
             }
         }
-        getModels()
     }
 
-
-    fun init(){
+    fun init() {
         isReadyToReview.set(false)
         isLoading.set(true)
         canShowUndo.set(false)
@@ -107,10 +107,13 @@ open class ArticlesViewModel @Inject internal constructor(
         likesCount.set(0)
         currentItem.value = 0
         reviewText.set("0/$reviewCount")
+        canNavigate.value=false
+
         clearAllLikes {
             canNavigate.value = true
             repositoryStateRelay.relay.accept(EMPTY)
         }
+
     }
 
 
@@ -129,7 +132,7 @@ open class ArticlesViewModel @Inject internal constructor(
                 reportDBState(DB_ERROR)
                 postExecute?.invoke()
             }
-            .doOnComplete{
+            .doOnComplete {
                 reportDBState(DB_CLEARED)
                 postExecute?.invoke()
             }

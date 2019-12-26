@@ -129,9 +129,10 @@ class SelectionFragment : Fragment() {
                 }
                 EMPTY -> {
                     val count = pagedArticlesAdapter.currentList?.size ?: 0
-                    if (count == 0)
+                    if (count == 0) {
                         viewModel.isLoading.set(true)
-                    viewModel.getModels()
+                        viewModel.getModels()
+                    }
                 }
             }
 
