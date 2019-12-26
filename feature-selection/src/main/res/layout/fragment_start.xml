@@ -6,7 +6,7 @@
     tools:context="com.sunragav.home24.feature_selection.views.StartFragment">
 
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btn_start"
         android:layout_width="120dp"
         android:layout_height="120dp"

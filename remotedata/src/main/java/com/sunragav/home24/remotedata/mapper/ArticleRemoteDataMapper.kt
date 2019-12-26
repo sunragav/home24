@@ -17,7 +17,8 @@ class ArticleRemoteDataMapper @Inject constructor() :
             sku = model.sku,
             imageUrl = model.media?.get(0)?.uri ?: "",
             title =model.title,
-            flagged = false
+            flagged = false,
+            reviewed = false
         )
     }
 

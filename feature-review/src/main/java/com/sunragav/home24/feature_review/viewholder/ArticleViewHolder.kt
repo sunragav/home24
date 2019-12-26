@@ -1,13 +1,13 @@
-package com.sunragav.home24.feature_selection.viewpager.viewholder
+package com.sunragav.home24.feature_review.viewholder
 
 import androidx.recyclerview.widget.RecyclerView
-import com.sunragav.feature_selection.databinding.ViewpagerItemViewBinding
+import com.sunragav.feature_review.databinding.ListItemViewBinding
 import com.sunragav.home24.domain.models.ArticleDomainEntity
-import com.sunragav.home24.feature_selection.mappers.ArticleUIModelMapper
-import com.sunragav.home24.feature_selection.viewpager.bindings.ArticleBindingModel
+import com.sunragav.home24.feature_review.mappers.ArticleUIModelMapper
+import com.sunragav.home24.feature_review.bindings.ArticleBindingModel
 
 
-class ArticleViewHolder(private val binding: ViewpagerItemViewBinding) :
+class ArticleViewHolder(private val binding: ListItemViewBinding) :
     RecyclerView.ViewHolder(binding.root) {
     fun bind(
         articleDomainEntity: ArticleDomainEntity,

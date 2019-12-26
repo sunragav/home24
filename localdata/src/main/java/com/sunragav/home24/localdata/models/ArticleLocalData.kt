@@ -9,5 +9,6 @@ data class ArticleLocalData(
     @PrimaryKey @ColumnInfo(name = "sku") val sku: String,
     @ColumnInfo(name = "imageUrl") val imageUrl: String,
     @ColumnInfo(name = "is_flagged") val flagged: Boolean,
-    @ColumnInfo(name = "title") val title: String
+    @ColumnInfo(name = "title") val title: String,
+    @ColumnInfo(name = "is_reviewed") val reviewed: Boolean
 )

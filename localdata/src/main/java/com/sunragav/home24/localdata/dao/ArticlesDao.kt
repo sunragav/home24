@@ -12,12 +12,12 @@ import io.reactivex.Observable
 interface ArticlesDao {
 
     @Query(
-        "SELECT * FROM articles order by sku"
+        "SELECT * FROM articles"
     )
     fun getArticles(): DataSource.Factory<Int, ArticleLocalData>
 
     @Query(
-        "SELECT * FROM articles where is_flagged = 1"
+        "SELECT * FROM articles where is_reviewed = 1"
     )
     fun getFavorites(): DataSource.Factory<Int, ArticleLocalData>
 
@@ -31,7 +31,7 @@ interface ArticlesDao {
     @Query("SELECT * FROM articles WHERE sku = :id limit 1")
     fun getArticleById(id: String): Observable<ArticleLocalData>
 
-    @Query("UPDATE articles set is_flagged = 0 where is_flagged = 1")
+    @Query("UPDATE articles set is_flagged = 0, is_reviewed =0")
     //@Query("DELETE FROM articles")
     fun clearLikesFromArticles():  Maybe<Int>
 }
