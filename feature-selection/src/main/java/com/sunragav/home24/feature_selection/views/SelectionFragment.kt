@@ -14,10 +14,8 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.viewpager2.widget.ViewPager2
 import com.sunragav.feature_selection.R
 import com.sunragav.feature_selection.databinding.FragmentSelectionBinding
-import com.sunragav.home24.domain.models.RepositoryState
 import com.sunragav.home24.domain.models.RepositoryState.Companion.CONNECTED
 import com.sunragav.home24.domain.models.RepositoryState.Companion.DB_ERROR
-import com.sunragav.home24.domain.models.RepositoryState.Companion.DB_LOADED
 import com.sunragav.home24.domain.models.RepositoryState.Companion.DISCONNECTED
 import com.sunragav.home24.domain.models.RepositoryState.Companion.EMPTY
 import com.sunragav.home24.domain.models.RepositoryState.Companion.ERROR
@@ -45,11 +43,13 @@ class SelectionFragment : Fragment() {
     @Inject
     lateinit var disposable: CompositeDisposable
 
-    lateinit var viewModel: ArticlesViewModel
+    private lateinit var viewModel: ArticlesViewModel
 
-    lateinit var pagedArticlesAdapter: PagedArticlesAdapter
+    private lateinit var pagedArticlesAdapter: PagedArticlesAdapter
 
-    lateinit var viewPager: ViewPager2
+    private lateinit var viewPager: ViewPager2
+
+    private lateinit var binding:FragmentSelectionBinding
 
     override fun onAttach(context: Context) {
         AndroidSupportInjection.inject(this)
@@ -65,7 +65,7 @@ class SelectionFragment : Fragment() {
                 ViewModelProviders.of(it, viewModelFactory).get(ArticlesViewModel::class.java)
         }
         // Inflate the layout for this fragment
-        val binding = DataBindingUtil.inflate<FragmentSelectionBinding>(
+        binding = DataBindingUtil.inflate<FragmentSelectionBinding>(
             inflater,
             R.layout.fragment_selection,
             container,
@@ -143,7 +143,7 @@ class SelectionFragment : Fragment() {
     private fun initViewModel() {
         viewModel.init()
         viewModel.currentItem.observe(this, Observer {
-            if(it==0) viewModel.canShowUndo.set(false)
+            if (it == 0) viewModel.isUndoShowable.set(false)
         })
     }
 
