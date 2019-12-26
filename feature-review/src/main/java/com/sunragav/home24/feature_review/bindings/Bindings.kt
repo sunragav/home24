@@ -1,4 +1,4 @@
-package com.sunragav.home24.feature_selection.viewpager.bindings
+package com.sunragav.home24.feature_review.bindings
 
 import android.graphics.Bitmap
 import android.view.View
@@ -10,7 +10,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DecodeFormat
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
-import com.sunragav.feature_selection.R
+import com.sunragav.feature_review.R
 
 @BindingConversion
 fun convertBooleanToVisibility(visible: Boolean): Int {

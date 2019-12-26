@@ -1,15 +1,15 @@
-package com.sunragav.home24.feature_selection.viewpager.adapter
+package com.sunragav.home24.feature_review.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
-import com.sunragav.feature_selection.R
-import com.sunragav.feature_selection.databinding.ViewpagerItemViewBinding
+import com.sunragav.feature_review.R
+import com.sunragav.feature_review.databinding.ListItemViewBinding
 import com.sunragav.home24.domain.models.ArticleDomainEntity
-import com.sunragav.home24.feature_selection.mappers.ArticleUIModelMapper
-import com.sunragav.home24.feature_selection.viewpager.viewholder.ArticleViewHolder
+import com.sunragav.home24.feature_review.mappers.ArticleUIModelMapper
+import com.sunragav.home24.feature_review.viewholder.ArticleViewHolder
 
 
 class PagedArticlesAdapter(
@@ -21,9 +21,9 @@ class PagedArticlesAdapter(
     }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ArticleViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
-        val itemArticleBinding = DataBindingUtil.inflate<ViewpagerItemViewBinding>(
+        val itemArticleBinding = DataBindingUtil.inflate<ListItemViewBinding>(
             layoutInflater,
-            R.layout.viewpager_item_view,
+            R.layout.list_item_view,
             parent,
             false
         )

@@ -1,0 +1,100 @@
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="viewModel"
+            type="com.sunragav.home24.presentation.viewmodels.ArticlesViewModel" />
+        <variable
+            name="binder"
+            type="com.sunragav.home24.feature_review.bindings.ArticleBindingModel" />
+    </data>
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="2dp"
+        android:elevation="5dp"
+        >
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="250dp"
+            android:layout_margin="5dp"
+            android:orientation="vertical">
+
+
+            <View
+                android:id="@+id/top"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/item_highlight_border"
+                android:background="@color/item_highlight_color"
+                android:visibility="@{binder.liked.booleanValue()}"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <View
+                android:id="@+id/bottom"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/item_highlight_border"
+                android:background="@color/item_highlight_color"
+                android:visibility="@{binder.liked.booleanValue()}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/right"
+                app:layout_constraintStart_toEndOf="@+id/left"
+                app:layout_constraintTop_toBottomOf="@+id/textView" />
+
+            <View
+                android:id="@+id/left"
+                android:layout_width="@dimen/item_highlight_border"
+                android:layout_height="wrap_content"
+                android:background="@color/item_highlight_color"
+                android:visibility="@{binder.liked.booleanValue()}"
+                app:layout_constraintBottom_toBottomOf="@+id/appCompatImageView"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <View
+                android:id="@+id/right"
+                android:layout_width="@dimen/item_highlight_border"
+                android:layout_height="wrap_content"
+                android:background="@color/item_highlight_color"
+                android:visibility="@{binder.liked.booleanValue()}"
+                app:layout_constraintBottom_toBottomOf="@+id/appCompatImageView"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/appCompatImageView"
+                android:layout_width="150dp"
+                android:layout_height="200dp"
+                android:layout_marginTop="8dp"
+                android:background="?selectableItemBackgroundBorderless"
+                android:scaleType="fitXY"
+                android:visibility="@{viewModel.toggleListGridView.intValue()==0}"
+                app:imageUrl="@{binder.imageUrl}"
+                app:layout_constraintEnd_toStartOf="@+id/right"
+                app:layout_constraintStart_toEndOf="@+id/left"
+                app:layout_constraintTop_toBottomOf="@+id/top" />
+
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="180dp"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:gravity="center"
+                android:maxLength="80"
+                android:maxLines="3"
+                android:visibility="@{viewModel.toggleListGridView.intValue()==0}"
+                app:layout_constraintEnd_toStartOf="@+id/right"
+                app:layout_constraintStart_toEndOf="@+id/left"
+                app:layout_constraintTop_toBottomOf="@+id/appCompatImageView"
+                tools:text="Title of the article" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
+</layout>

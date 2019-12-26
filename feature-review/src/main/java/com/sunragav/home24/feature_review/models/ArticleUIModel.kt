@@ -1,4 +1,4 @@
-package com.sunragav.home24.feature_selection.models
+package com.sunragav.home24.feature_review.models
 
 data class ArticleUIModel (
     val sku: String,

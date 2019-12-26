@@ -8,12 +8,11 @@
     <fragment
         android:id="@+id/selectionFragment"
         android:name="com.sunragav.home24.feature_selection.views.SelectionFragment"
-        android:label="SelectionFragment" >
+        android:label="SelectionFragment">
         <action
             android:id="@+id/action_selectionFragment_to_reviewFragment"
             app:destination="@id/reviewFragment"
-            app:popUpTo="@+id/reviewFragment"
-            app:popUpToInclusive="true" />
+            app:popUpTo="@+id/reviewFragment" />
         <action
             android:id="@+id/action_selectionFragment_to_startFragment"
             app:destination="@id/startFragment"
@@ -23,7 +22,7 @@
     <fragment
         android:id="@+id/reviewFragment"
         android:name="com.sunragav.home24.feature_review.views.ReviewFragment"
-        android:label="ReviewFragment" >
+        android:label="ReviewFragment">
         <action
             android:id="@+id/action_reviewFragment_pop_including_selectionFragment"
             app:popUpTo="@id/selectionFragment"
@@ -33,7 +32,7 @@
         android:id="@+id/startFragment"
         android:name="com.sunragav.home24.feature_selection.views.StartFragment"
         android:label="fragment_start"
-        tools:layout="@layout/fragment_start" >
+        tools:layout="@layout/fragment_start">
         <action
             android:id="@+id/action_startFragment_to_selectionFragment"
             app:destination="@id/selectionFragment"

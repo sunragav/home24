@@ -4,5 +4,6 @@ data class ArticleDomainEntity(
     val sku: String,
     val imageUrl: String,
     val flagged: Boolean = false,
-    val title: String
+    val title: String,
+    val reviewed: Boolean
 )

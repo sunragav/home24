@@ -36,12 +36,15 @@ open class ArticlesViewModel @Inject internal constructor(
 ) : ViewModel(), CoroutineScope {
     companion object {
         private const val LIMIT = 40
+        const val GRID = 1
+        const val LIST = 0
     }
 
     val isLoading = ObservableField<Boolean>()
     val isReadyToReview = ObservableField<Boolean>()
     val isUndoShowable = ObservableField<Boolean>()
     val reviewText = ObservableField<String>()
+    val toggleListGridView = ObservableField<Int>()
 
 
 
@@ -53,8 +56,6 @@ open class ArticlesViewModel @Inject internal constructor(
 
     val articlesListSource: LiveData<PagedList<ArticleDomainEntity>>
         get() = Transformations.switchMap(pagedListMediator) { it }
-
-
 
 
     override val coroutineContext: CoroutineContext
@@ -104,7 +105,8 @@ open class ArticlesViewModel @Inject internal constructor(
         likesCount.set(0)
         currentItem.value = 0
         reviewText.set("0/$reviewCount")
-        canNavigate.value=false
+        canNavigate.value = false
+        toggleListGridView.set(LIST)
 
         clearAllLikes {
             canNavigate.value = true
@@ -153,8 +155,7 @@ open class ArticlesViewModel @Inject internal constructor(
                 if (currentIndex == reviewCount - 1 || currentIndex >= itemCount) {
                     isReadyToReview.set(true)
                     isUndoShowable.set(false)
-                }
-                else if (currentIndex < itemCount) {
+                } else if (currentIndex < itemCount) {
                     isUndoShowable.set(true)
                     postExecute?.invoke()
                 }
@@ -183,13 +184,10 @@ open class ArticlesViewModel @Inject internal constructor(
         reviewText.set("${likesCount.get()}/$reviewCount")
         //update db only if the current like state and the db like state are different
         //navigate to next item only after db update
-        if (liked != articleDomainEntity.flagged) {
-            update(articleDomainEntity.copy(flagged = liked)) {
+
+            update(articleDomainEntity.copy(flagged = liked,reviewed = true)) {
                 executePostUpdate.invoke()
             }
-        } else {
-            executePostUpdate.invoke()
-        }
     }
 
     private fun update(

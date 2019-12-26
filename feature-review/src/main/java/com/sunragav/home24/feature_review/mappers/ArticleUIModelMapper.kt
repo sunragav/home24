@@ -1,16 +1,11 @@
-package com.sunragav.home24.localdata.mappers
+package com.sunragav.home24.feature_review.mappers
 
 import com.sunragav.home24.domain.models.ArticleDomainEntity
-import com.sunragav.home24.localdata.models.ArticleLocalData
-import com.sunragav.home24.localdata.qualifiers.LocalDataMapper
+import com.sunragav.home24.feature_review.models.ArticleUIModel
 import com.sunragav.home24.utils.Mapper
-import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
-@LocalDataMapper
-class ArticleLocalDataMapper @Inject constructor() : Mapper<ArticleDomainEntity, ArticleLocalData> {
-    override fun from(model: ArticleLocalData): ArticleDomainEntity {
+class ArticleUIModelMapper :Mapper<ArticleDomainEntity, ArticleUIModel>{
+    override fun from(model: ArticleUIModel): ArticleDomainEntity {
         return ArticleDomainEntity(
             sku = model.sku,
             imageUrl = model.imageUrl,
@@ -20,8 +15,8 @@ class ArticleLocalDataMapper @Inject constructor() : Mapper<ArticleDomainEntity,
         )
     }
 
-    override fun to(entity: ArticleDomainEntity): ArticleLocalData {
-        return ArticleLocalData(
+    override fun to(entity: ArticleDomainEntity): ArticleUIModel {
+        return ArticleUIModel(
             sku = entity.sku,
             imageUrl = entity.imageUrl,
             flagged = entity.flagged,
@@ -29,5 +24,6 @@ class ArticleLocalDataMapper @Inject constructor() : Mapper<ArticleDomainEntity,
             reviewed = entity.reviewed
         )
     }
+
 
 }
