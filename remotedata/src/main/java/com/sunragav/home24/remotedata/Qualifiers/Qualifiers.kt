@@ -1,4 +1,4 @@
-package com.sunragav.home24.remotedata.Qualifiers
+package com.sunragav.home24.remotedata.qualifiers
 
 import javax.inject.Qualifier
 
@@ -17,3 +17,4 @@ annotation class Locale
 @MustBeDocumented
 @Retention(AnnotationRetention.RUNTIME)
 annotation class AppDomain
+

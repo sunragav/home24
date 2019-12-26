@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">feature-review</string>
+    <string name="review_fragment">review fragment</string>
 </resources>

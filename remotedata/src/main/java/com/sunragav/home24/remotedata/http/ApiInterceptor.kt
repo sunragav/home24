@@ -1,7 +1,7 @@
 package com.sunragav.home24.remotedata.http
 
-import com.sunragav.home24.remotedata.Qualifiers.AppDomain
-import com.sunragav.home24.remotedata.Qualifiers.Locale
+import com.sunragav.home24.remotedata.qualifiers.AppDomain
+import com.sunragav.home24.remotedata.qualifiers.Locale
 import okhttp3.Interceptor
 import okhttp3.Response
 import javax.inject.Inject

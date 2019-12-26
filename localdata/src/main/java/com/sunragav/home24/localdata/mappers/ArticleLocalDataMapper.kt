@@ -14,7 +14,8 @@ class ArticleLocalDataMapper @Inject constructor() : Mapper<ArticleDomainEntity,
         return ArticleDomainEntity(
             sku = model.sku,
             imageUrl = model.imageUrl,
-            flagged = model.flagged
+            flagged = model.flagged,
+            title = model.title
         )
     }
 
@@ -22,7 +23,8 @@ class ArticleLocalDataMapper @Inject constructor() : Mapper<ArticleDomainEntity,
         return ArticleLocalData(
             sku = entity.sku,
             imageUrl = entity.imageUrl,
-            flagged = entity.flagged
+            flagged = entity.flagged,
+            title = entity.title
         )
     }
 
