@@ -66,7 +66,7 @@ class ArticlesRepositoryImpl @Inject constructor(
 
         private fun requestAndSaveData() {
 
-            if (isRequestInProgress || query.flagged) return
+            if (isRequestInProgress || query.flagged || query.reviewed) return
             repositoryStateRelay.relay.accept(RepositoryState.LOADING)
             println("Requesting page$lastRequestedPage")
             isRequestInProgress = true
