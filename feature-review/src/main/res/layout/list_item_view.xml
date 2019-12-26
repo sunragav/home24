@@ -4,97 +4,93 @@
 
     <data>
 
+        <import type="android.view.View" />
         <variable
             name="viewModel"
             type="com.sunragav.home24.presentation.viewmodels.ArticlesViewModel" />
+
         <variable
             name="binder"
             type="com.sunragav.home24.feature_review.bindings.ArticleBindingModel" />
     </data>
 
-    <androidx.cardview.widget.CardView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:cardCornerRadius="2dp"
-        android:elevation="5dp"
-        >
 
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="250dp"
-            android:layout_margin="5dp"
-            android:orientation="vertical">
+            android:layout_height="wrap_content"
+            android:layout_margin="2dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/item_border"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_height="@{viewModel.isListView() ? @dimen/list_item_layout_height : @dimen/grid_item_layout_height }"
+            app:layout_width="@{viewModel.isListView() ? @dimen/list_item_layout_width : @dimen/grid_item_layout_width }">
 
-
-            <View
-                android:id="@+id/top"
-                android:layout_width="wrap_content"
-                android:layout_height="@dimen/item_highlight_border"
-                android:background="@color/item_highlight_color"
-                android:visibility="@{binder.liked.booleanValue()}"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <View
-                android:id="@+id/bottom"
-                android:layout_width="wrap_content"
-                android:layout_height="@dimen/item_highlight_border"
-                android:background="@color/item_highlight_color"
-                android:visibility="@{binder.liked.booleanValue()}"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/right"
-                app:layout_constraintStart_toEndOf="@+id/left"
-                app:layout_constraintTop_toBottomOf="@+id/textView" />
-
-            <View
-                android:id="@+id/left"
-                android:layout_width="@dimen/item_highlight_border"
-                android:layout_height="wrap_content"
-                android:background="@color/item_highlight_color"
-                android:visibility="@{binder.liked.booleanValue()}"
-                app:layout_constraintBottom_toBottomOf="@+id/appCompatImageView"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <View
-                android:id="@+id/right"
-                android:layout_width="@dimen/item_highlight_border"
-                android:layout_height="wrap_content"
-                android:background="@color/item_highlight_color"
-                android:visibility="@{binder.liked.booleanValue()}"
-                app:layout_constraintBottom_toBottomOf="@+id/appCompatImageView"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/appCompatImageView"
-                android:layout_width="150dp"
-                android:layout_height="200dp"
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cv_imageViewContatiner"
+                android:layout_width="@dimen/list_item_image_width"
+                android:layout_height="@dimen/list_item_image_height"
                 android:layout_marginTop="8dp"
-                android:background="?selectableItemBackgroundBorderless"
-                android:scaleType="fitXY"
-                android:visibility="@{viewModel.toggleListGridView.intValue()==0}"
-                app:imageUrl="@{binder.imageUrl}"
-                app:layout_constraintEnd_toStartOf="@+id/right"
-                app:layout_constraintStart_toEndOf="@+id/left"
-                app:layout_constraintTop_toBottomOf="@+id/top" />
+                android:elevation="10dp"
+                app:cardCornerRadius="15dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_height="@{viewModel.isListView() ? @dimen/list_item_image_height : @dimen/grid_item_image_height }"
+                app:layout_width="@{viewModel.isListView() ? @dimen/list_item_image_width : @dimen/grid_item_image_width }">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/appCompatImageView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="fitXY"
+                    app:imageUrl="@{binder.imageUrl}"
+                    tools:layout_editor_absoluteX="219dp"
+                    tools:layout_editor_absoluteY="8dp"
+                    tools:srcCompat="@tools:sample/avatars" />
+            </androidx.cardview.widget.CardView>
 
             <TextView
                 android:id="@+id/textView"
                 android:layout_width="180dp"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
                 android:ellipsize="end"
                 android:gravity="center"
-                android:maxLength="80"
+                android:maxLength="100"
                 android:maxLines="3"
-                android:visibility="@{viewModel.toggleListGridView.intValue()==0}"
-                app:layout_constraintEnd_toStartOf="@+id/right"
-                app:layout_constraintStart_toEndOf="@+id/left"
-                app:layout_constraintTop_toBottomOf="@+id/appCompatImageView"
+                android:text="@{binder.title}"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:visibility="@{viewModel.isListView().booleanValue()?View.VISIBLE:View.GONE}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/cv_imageViewContatiner"
                 tools:text="Title of the article" />
 
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/imageView"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:elevation="11dp"
+                android:src="@drawable/ic_like_heart"
+                android:visibility="@{binder.liked.booleanValue()}"
+                app:layout_constraintEnd_toEndOf="@+id/cv_imageViewContatiner"
+                app:layout_constraintTop_toTopOf="@+id/cv_imageViewContatiner" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
-    </androidx.cardview.widget.CardView>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
 </layout>

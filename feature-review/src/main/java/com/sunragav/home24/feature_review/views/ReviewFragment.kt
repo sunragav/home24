@@ -3,18 +3,17 @@ package com.sunragav.home24.feature_review.views
 
 import android.content.Context
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-
 import com.sunragav.feature_review.R
 import com.sunragav.feature_review.databinding.FragmentReviewBinding
 import com.sunragav.home24.domain.models.RepositoryState
@@ -45,13 +44,13 @@ class ReviewFragment : Fragment() {
 
     lateinit var viewModel: ArticlesViewModel
 
-    lateinit var binding:FragmentReviewBinding
+    lateinit var binding: FragmentReviewBinding
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var pagedArticlesAdapter: PagedArticlesAdapter
 
     @Inject
-    lateinit var repositoryStateRelay:RepositoryStateRelay
+    lateinit var repositoryStateRelay: RepositoryStateRelay
 
     @Inject
     lateinit var disposable: CompositeDisposable
@@ -68,7 +67,7 @@ class ReviewFragment : Fragment() {
         // Inflate the layout for this fragment
 
 
-        binding = DataBindingUtil.inflate(inflater,R.layout.fragment_review,container,false)
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_review, container, false)
         activity?.let {
             viewModel =
                 ViewModelProviders.of(it, viewModelFactory).get(ArticlesViewModel::class.java)
@@ -84,14 +83,21 @@ class ReviewFragment : Fragment() {
 
         initAdapter()
         startListeningToRepoState()
+        val gridLayout = GridLayoutManager(activity, 2)
+        val listLayout = GridLayoutManager(activity, 1)
 
 
+        binding.clickHandler = ClickListener(viewModel, {
+            viewModel.articlesListSource.removeObservers(this)
+            viewModel.getReviewed()
+            initPagedListObserver()
+            binding.rvArticlesList.layoutManager = listLayout
 
-        binding.clickHandler = ClickListener(viewModel,{
-            binding.rvArticlesList.layoutManager = GridLayoutManager(activity, 1)
-
-        }){
-            binding.rvArticlesList.layoutManager = GridLayoutManager(activity, 2)
+        }) {
+            viewModel.articlesListSource.removeObservers(this)
+            viewModel.getLiked()
+            initPagedListObserver()
+            binding.rvArticlesList.layoutManager = gridLayout
         }
         return binding.root
     }
@@ -101,12 +107,16 @@ class ReviewFragment : Fragment() {
     }
 
 
-
     private fun initAdapter() {
+
         pagedArticlesAdapter = PagedArticlesAdapter(
-            ArticleUIModelMapper()
+            ArticleUIModelMapper(), viewModel
         )
         recyclerView.adapter = pagedArticlesAdapter
+        initPagedListObserver()
+    }
+
+    private fun initPagedListObserver() {
         viewModel.articlesListSource.observe(this, Observer {
             if (it.size > 0) {
                 repositoryStateRelay.relay.accept(RepositoryState.UI_LOADED)
@@ -133,9 +143,10 @@ class ReviewFragment : Fragment() {
                     )
                 }
                 DB_ERROR -> {
+                    println("DB error!")
                     Toast.makeText(
                         activity,
-                        R.string.network_lost,
+                        R.string.db_error,
                         Toast.LENGTH_LONG
                     )
                 }
@@ -157,7 +168,7 @@ class ReviewFragment : Fragment() {
                     val count = pagedArticlesAdapter.currentList?.size ?: 0
                     if (count == 0) {
                         viewModel.isLoading.set(true)
-                        viewModel.getFavoites()
+                        viewModel.getReviewed()
                     }
                 }
             }

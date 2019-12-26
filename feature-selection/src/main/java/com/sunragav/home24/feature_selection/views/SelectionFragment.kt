@@ -14,6 +14,7 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.viewpager2.widget.ViewPager2
 import com.sunragav.feature_selection.R
 import com.sunragav.feature_selection.databinding.FragmentSelectionBinding
+import com.sunragav.home24.domain.models.RepositoryState
 import com.sunragav.home24.domain.models.RepositoryState.Companion.CONNECTED
 import com.sunragav.home24.domain.models.RepositoryState.Companion.DB_ERROR
 import com.sunragav.home24.domain.models.RepositoryState.Companion.DISCONNECTED
@@ -75,19 +76,25 @@ class SelectionFragment : Fragment() {
 
         binding.viewModel = viewModel
 
-        initViewModel()
+
+        startListeningToRepoState()
+
+
 
         initViewPager()
 
 
-        initAdapter()
 
-        startListeningToRepoState()
+        initViewModel {
 
-        binding.clickListener = ClickListener(
-            viewPager = viewPager,
-            viewModel = viewModel
-        )
+            initAdapter()
+            binding.clickListener = ClickListener(
+                viewPager = viewPager,
+                viewModel = viewModel
+            )
+
+        }
+
 
         return binding.root
     }
@@ -106,10 +113,19 @@ class SelectionFragment : Fragment() {
                         Toast.LENGTH_LONG
                     )
                 }
-                DB_ERROR -> {
+                RepositoryState.DB_CLEARED -> {
+                    println("DB cleared successfully!!")
                     Toast.makeText(
                         activity,
-                        R.string.network_lost,
+                        "DB successfully cleared",
+                        Toast.LENGTH_LONG
+                    )
+                }
+                DB_ERROR -> {
+                    println("DB error!!")
+                    Toast.makeText(
+                        activity,
+                        R.string.db_error,
                         Toast.LENGTH_LONG
                     )
                 }
@@ -140,15 +156,19 @@ class SelectionFragment : Fragment() {
         disposable.add(subscription)
     }
 
-    private fun initViewModel() {
-        viewModel.init()
-        viewModel.currentItem.observe(this, Observer {
-            if (it == 0) viewModel.isUndoShowable.set(false)
-        })
+    private fun initViewModel(postViewModelInitExecute: () -> Unit) {
+        viewModel.init {
+            postViewModelInitExecute.invoke()
+
+            viewModel.currentItem.observe(this, Observer {
+                if (it == 0) viewModel.isUndoShowable.set(false)
+            })
+        }
     }
 
     private fun initViewPager() {
         viewPager.isUserInputEnabled = false
+        viewPager.currentItem = 0
     }
 
     private fun initAdapter() {
@@ -169,6 +189,7 @@ class SelectionFragment : Fragment() {
     override fun onDetach() {
         super.onDetach()
         viewModel.articlesListSource.removeObservers(this)
+        viewModel.currentItem.removeObservers(this)
         disposable.dispose()
     }
 

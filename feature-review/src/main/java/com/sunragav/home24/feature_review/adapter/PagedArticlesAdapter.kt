@@ -10,10 +10,12 @@ import com.sunragav.feature_review.databinding.ListItemViewBinding
 import com.sunragav.home24.domain.models.ArticleDomainEntity
 import com.sunragav.home24.feature_review.mappers.ArticleUIModelMapper
 import com.sunragav.home24.feature_review.viewholder.ArticleViewHolder
+import com.sunragav.home24.presentation.viewmodels.ArticlesViewModel
 
 
 class PagedArticlesAdapter(
-    private val articleUIModelMapper: ArticleUIModelMapper
+    private val articleUIModelMapper: ArticleUIModelMapper,
+    private val viewModel: ArticlesViewModel
 ) :
     PagedListAdapter<ArticleDomainEntity, ArticleViewHolder>(ARTICLES_COMPARATOR) {
     init {
@@ -27,6 +29,7 @@ class PagedArticlesAdapter(
             parent,
             false
         )
+        itemArticleBinding.viewModel = viewModel
         return ArticleViewHolder(itemArticleBinding)
     }
 
