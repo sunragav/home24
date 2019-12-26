@@ -19,6 +19,12 @@ interface ArticlesDao {
     @Query(
         "SELECT * FROM articles where is_reviewed = 1"
     )
+    fun getReviewedArticles(): DataSource.Factory<Int, ArticleLocalData>
+
+
+    @Query(
+        "SELECT * FROM articles where is_flagged = 1"
+    )
     fun getFavorites(): DataSource.Factory<Int, ArticleLocalData>
 
 

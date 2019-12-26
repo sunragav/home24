@@ -17,7 +17,8 @@ class GetArticlesAction @Inject constructor(
     data class Params(
         val limit: Int = PAGE_SIZE,
         val offset: Int = 0,
-        val flagged:Boolean = false
+        val flagged: Boolean = false,
+        val reviewed: Boolean = false
     )
 
     fun buildUseCase(input: Params): GetArticlesActionResult {

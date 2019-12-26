@@ -7,7 +7,6 @@ import androidx.paging.PagedList
 import com.sunragav.home24.domain.models.ArticleDomainEntity
 import com.sunragav.home24.domain.models.RepositoryState
 import com.sunragav.home24.domain.models.RepositoryState.Companion.DB_CLEARED
-import com.sunragav.home24.domain.models.RepositoryState.Companion.DB_ERROR
 import com.sunragav.home24.domain.models.RepositoryState.Companion.EMPTY
 import com.sunragav.home24.domain.models.RepositoryStateRelay
 import com.sunragav.home24.domain.qualifiers.Background
@@ -15,11 +14,11 @@ import com.sunragav.home24.domain.qualifiers.ReviewCount
 import com.sunragav.home24.domain.usecases.ClearAllLikesAction
 import com.sunragav.home24.domain.usecases.GetArticlesAction
 import com.sunragav.home24.domain.usecases.UpdateArticleAction
-import io.reactivex.Observable
 import io.reactivex.Scheduler
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
-
 import kotlinx.coroutines.*
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
 
@@ -36,16 +35,13 @@ open class ArticlesViewModel @Inject internal constructor(
 ) : ViewModel(), CoroutineScope {
     companion object {
         private const val LIMIT = 40
-        const val GRID = 1
-        const val LIST = 0
     }
 
     val isLoading = ObservableField<Boolean>()
     val isReadyToReview = ObservableField<Boolean>()
     val isUndoShowable = ObservableField<Boolean>()
     val reviewText = ObservableField<String>()
-    val toggleListGridView = ObservableField<Int>()
-
+    val isListView = ObservableField<Boolean>()
 
 
     val articlesCount = MutableLiveData<Int>()
@@ -69,8 +65,9 @@ open class ArticlesViewModel @Inject internal constructor(
     private val likesCount = ObservableField<Int>()
     private val reviewCount: Int = reviewCountStr.toInt()
 
-    private var normalRequestParam = GetArticlesAction.Params(limit = LIMIT)
-    private var favoritesRequestParam = GetArticlesAction.Params(limit = LIMIT, flagged = true)
+    private var normalRequestParam = GetArticlesAction.Params(limit = LIMIT, reviewed = false)
+    private var favoritesRequestParam = GetArticlesAction.Params(flagged = true)
+    private var reviewedRequestParam = GetArticlesAction.Params(reviewed = true)
     private val filterRequestLiveData = MutableLiveData<GetArticlesAction.Params>()
 
     private val pagingConfig = PagedList.Config.Builder()
@@ -97,7 +94,7 @@ open class ArticlesViewModel @Inject internal constructor(
         }
     }
 
-    fun init() {
+    fun init(executeTaskAfterInit: () -> Unit) {
         isReadyToReview.set(false)
         isLoading.set(true)
         isUndoShowable.set(false)
@@ -106,10 +103,10 @@ open class ArticlesViewModel @Inject internal constructor(
         currentItem.value = 0
         reviewText.set("0/$reviewCount")
         canNavigate.value = false
-        toggleListGridView.set(LIST)
-
+        isListView.set(true)
         clearAllLikes {
             canNavigate.value = true
+            executeTaskAfterInit.invoke()
             repositoryStateRelay.relay.accept(EMPTY)
         }
 
@@ -120,32 +117,33 @@ open class ArticlesViewModel @Inject internal constructor(
         filterRequestLiveData.postValue(normalRequestParam)
     }
 
-    fun getFavoites() {
+    fun getReviewed() {
+        filterRequestLiveData.postValue(reviewedRequestParam)
+    }
+
+    fun getLiked() {
         filterRequestLiveData.postValue(favoritesRequestParam)
     }
 
-    fun clearAllLikes(postExecute: Callback? = null) {
+    private fun clearAllLikes(executeTaskAfterLikesCleared: Callback? = null) {
         canNavigate.value = false
         clearAllLikesAction.buildUseCase()
-            .doOnError {
-                reportDBState(DB_ERROR)
-                postExecute?.invoke()
-            }
-            .doOnComplete {
+            .observeOn(AndroidSchedulers.mainThread())
+            .timeout(1000, TimeUnit.MILLISECONDS)
+            .onTerminateDetach()
+            .doFinally {
                 reportDBState(DB_CLEARED)
-                postExecute?.invoke()
+                getModels()
+                executeTaskAfterLikesCleared?.invoke()
             }
             .doOnSubscribe { compositeDisposable.add(it) }
-            .doOnSuccess {
-                reportDBState(DB_CLEARED)
-                postExecute?.invoke()
-            }.subscribe()
+            .subscribe()
     }
 
     fun handleLikeDislike(
         articleDomainEntity: ArticleDomainEntity,
         liked: Boolean,
-        postExecute: Callback? = null
+        executeAfterDBUpdate: Callback? = null
 
     ) {
         if (isReadyToReview.get() == false) {
@@ -157,7 +155,7 @@ open class ArticlesViewModel @Inject internal constructor(
                     isUndoShowable.set(false)
                 } else if (currentIndex < itemCount) {
                     isUndoShowable.set(true)
-                    postExecute?.invoke()
+                    executeAfterDBUpdate?.invoke()
                 }
             }
 
@@ -168,7 +166,7 @@ open class ArticlesViewModel @Inject internal constructor(
     private fun handleIfAlreadyLiked(
         articleDomainEntity: ArticleDomainEntity,
         liked: Boolean,
-        executePostUpdate: Callback
+        executeAfterDBUpdate: Callback
     ) {
         val count = likesCount.get() ?: 0
 
@@ -185,9 +183,9 @@ open class ArticlesViewModel @Inject internal constructor(
         //update db only if the current like state and the db like state are different
         //navigate to next item only after db update
 
-            update(articleDomainEntity.copy(flagged = liked,reviewed = true)) {
-                executePostUpdate.invoke()
-            }
+        update(articleDomainEntity.copy(flagged = liked, reviewed = true)) {
+            executeAfterDBUpdate.invoke()
+        }
     }
 
     private fun update(
@@ -195,25 +193,26 @@ open class ArticlesViewModel @Inject internal constructor(
         postExecute: Callback
     ) {
         updateArticleAction.buildUseCase(articleDomainEntity)
-            .doOnError { reportDBState(DB_ERROR) }
-            .doOnSubscribe { compositeDisposable.add(it) }
+            .timeout(1000, TimeUnit.MILLISECONDS)
+            .onTerminateDetach()
+            .doOnSubscribe {
+                compositeDisposable.add(it)
+            }
+            .doFinally {
+                postExecute.invoke()
+            }
             .andThen {
                 reportDBState(RepositoryState.DB_UPDATED)
-                postExecute.invoke()
             }.subscribe()
     }
 
     override fun onCleared() {
         super.onCleared()
-        compositeDisposable.dispose()
+        //compositeDisposable.dispose()
     }
 
     private fun reportDBState(repositoryState: RepositoryState) {
-        Observable.fromCallable {
-            repositoryStateRelay.relay.accept(repositoryState)
-        }.doOnSubscribe { compositeDisposable.add(it) }
-            .retry(1)
-            .subscribe()
+        repositoryStateRelay.relay.accept(repositoryState)
     }
 
 

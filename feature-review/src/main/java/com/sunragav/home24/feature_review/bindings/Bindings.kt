@@ -12,11 +12,25 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
 import com.sunragav.feature_review.R
 
+
 @BindingConversion
 fun convertBooleanToVisibility(visible: Boolean): Int {
     return if (visible) View.VISIBLE else View.GONE
 }
 
+@BindingAdapter("layout_height")
+fun setLayoutHeight(view: View, height: Float) {
+    val layoutParams = view.layoutParams
+    layoutParams.height = height.toInt()
+    view.layoutParams = layoutParams
+}
+
+@BindingAdapter("layout_width")
+fun setLayoutWidth(view: View, width: Float) {
+    val layoutParams = view.layoutParams
+    layoutParams.width = width.toInt()
+    view.layoutParams = layoutParams
+}
 
 @BindingConversion
 fun convertStringToText(field: ObservableField<String>): String {

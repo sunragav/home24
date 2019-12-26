@@ -11,7 +11,6 @@ import com.sunragav.home24.localdata.mappers.ArticleLocalDataMapper
 import io.reactivex.Completable
 import io.reactivex.Maybe
 import io.reactivex.Observable
-import io.reactivex.Single
 import javax.inject.Inject
 
 class LocalRepositoryImpl @Inject constructor(
@@ -24,7 +23,7 @@ class LocalRepositoryImpl @Inject constructor(
     }
 
     override fun getArticlesDatasourceFactory(param: GetArticlesAction.Params): DataSource.Factory<Int, ArticleDomainEntity> {
-        return (if (param.flagged) articlesDao.getFavorites() else articlesDao.getArticles())
+        return (if (param.flagged) articlesDao.getFavorites() else if (param.reviewed) articlesDao.getReviewedArticles() else articlesDao.getArticles())
             .map { articleLocalDataMapper.from(it) }
     }
 

@@ -17,7 +17,8 @@ import org.mockito.MockitoAnnotations
 class GetArticlesActionTest {
     companion object {
         private val query = GetArticlesAction.Params(
-            flagged = false
+            flagged = false,
+            reviewed = true
         )
     }
 
