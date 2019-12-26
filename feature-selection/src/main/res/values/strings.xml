@@ -9,4 +9,6 @@
     <string name="network_lost">Sorry, lost the network connection</string>
     <string name="network_error">Sorry, there was an error in the network</string>
     <string name="db_error">Sorry, there was an error in the local DB</string>
+    <string name="congrats">Congrats!!</string>
+    <string name="goto_review_dlg_content">You have reached the end of the review!!\n Click the star button below\n\n👇\n\n to go to the review screen</string>
 </resources>

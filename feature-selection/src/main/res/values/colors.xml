@@ -10,5 +10,7 @@
     <color name="dirtyGreen">#93AC9C</color>
     <color name="skyBlue">#85d5e8</color>
     <color name="dirtyDarkGreen">#65796F</color>
+    <color name="dlg_content_bg">#343434</color>
+    <color name="dlg_content_text_color">#9FA09F</color>
 
 </resources>

@@ -33,7 +33,6 @@ class ClickListener(
                     viewModel.handleLikeDislike(it, liked) {
                         pagedArticlesAdapter.notifyItemChanged(currentItem)
                         viewPager.currentItem++
-
                     }
                 }
             }

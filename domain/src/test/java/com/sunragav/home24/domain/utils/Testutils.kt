@@ -10,7 +10,8 @@ class TestDataContainer {
             return ArticleDomainEntity(
                 sku = "143",
                 imageUrl = "thumbnail.jpg",
-                flagged = false
+                flagged = false,
+                title = "Fake title"
             )
         }
     }

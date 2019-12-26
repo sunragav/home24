@@ -2,7 +2,6 @@ package com.sunragav.home24.presentation.viewmodels
 
 import androidx.databinding.ObservableField
 import androidx.lifecycle.*
-import androidx.paging.DataSource
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
 import com.sunragav.home24.domain.models.ArticleDomainEntity
@@ -14,7 +13,6 @@ import com.sunragav.home24.domain.models.RepositoryStateRelay
 import com.sunragav.home24.domain.qualifiers.Background
 import com.sunragav.home24.domain.qualifiers.ReviewCount
 import com.sunragav.home24.domain.usecases.ClearAllLikesAction
-import com.sunragav.home24.domain.usecases.GetArticleAction
 import com.sunragav.home24.domain.usecases.GetArticlesAction
 import com.sunragav.home24.domain.usecases.UpdateArticleAction
 import io.reactivex.Observable
@@ -42,7 +40,7 @@ open class ArticlesViewModel @Inject internal constructor(
 
     val isLoading = ObservableField<Boolean>()
     val isReadyToReview = ObservableField<Boolean>()
-    val canShowUndo = ObservableField<Boolean>()
+    val isUndoShowable = ObservableField<Boolean>()
     val reviewText = ObservableField<String>()
 
 
@@ -52,7 +50,6 @@ open class ArticlesViewModel @Inject internal constructor(
     val currentItem = MutableLiveData<Int>()
 
     val canNavigate = MutableLiveData<Boolean>()
-
 
     val articlesListSource: LiveData<PagedList<ArticleDomainEntity>>
         get() = Transformations.switchMap(pagedListMediator) { it }
@@ -102,7 +99,7 @@ open class ArticlesViewModel @Inject internal constructor(
     fun init() {
         isReadyToReview.set(false)
         isLoading.set(true)
-        canShowUndo.set(false)
+        isUndoShowable.set(false)
         articlesCount.value = 0
         likesCount.set(0)
         currentItem.value = 0
@@ -155,10 +152,10 @@ open class ArticlesViewModel @Inject internal constructor(
                 val currentIndex = currentItem.value ?: 0
                 if (currentIndex == reviewCount - 1 || currentIndex >= itemCount) {
                     isReadyToReview.set(true)
-                    canShowUndo.set(false)
+                    isUndoShowable.set(false)
                 }
-                if (currentIndex < itemCount) {
-                    canShowUndo.set(true)
+                else if (currentIndex < itemCount) {
+                    isUndoShowable.set(true)
                     postExecute?.invoke()
                 }
             }
