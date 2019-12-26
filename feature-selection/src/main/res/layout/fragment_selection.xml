@@ -50,7 +50,7 @@
                 android:layout_margin="@dimen/dlg_title_content_divider_margin"
                 android:layout_width="wrap_content"
                 android:layout_height="1dp"
-                android:background="#A29E9E" />
+                android:background="@color/dlg_divider_color" />
             <TextView
                 android:text="@string/goto_review_dlg_content"
                 android:textColor="@color/dlg_content_text_color"
