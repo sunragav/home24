@@ -53,6 +53,9 @@ open class ArticlesViewModel @Inject internal constructor(
     val articlesListSource: LiveData<PagedList<ArticleDomainEntity>>
         get() = Transformations.switchMap(pagedListMediator) { it }
 
+    lateinit var reviewedArticlesListSource: LiveData<PagedList<ArticleDomainEntity>>
+
+    lateinit var likedArticlesListSource: LiveData<PagedList<ArticleDomainEntity>>
 
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main + viewModelJob
@@ -94,7 +97,7 @@ open class ArticlesViewModel @Inject internal constructor(
         }
     }
 
-    fun init(executeTaskAfterInit: () -> Unit) {
+    fun init() {
         isReadyToReview.set(false)
         isLoading.set(true)
         isUndoShowable.set(false)
@@ -106,7 +109,6 @@ open class ArticlesViewModel @Inject internal constructor(
         isListView.set(true)
         clearAllLikes {
             canNavigate.value = true
-            executeTaskAfterInit.invoke()
             repositoryStateRelay.relay.accept(EMPTY)
         }
 
@@ -117,12 +119,29 @@ open class ArticlesViewModel @Inject internal constructor(
         filterRequestLiveData.postValue(normalRequestParam)
     }
 
-    fun getReviewed() {
-        filterRequestLiveData.postValue(reviewedRequestParam)
+    fun getReviewed(): LiveData<PagedList<ArticleDomainEntity>> {
+        if (::reviewedArticlesListSource.isInitialized.not())
+            reviewedArticlesListSource =
+                with(getArticlesAction.buildUseCase(reviewedRequestParam)) {
+
+                    LivePagedListBuilder(dataSource, pagingConfig)
+                        .setBoundaryCallback(boundaryCallback)
+                        .build()
+
+                }
+        return reviewedArticlesListSource
     }
 
-    fun getLiked() {
-        filterRequestLiveData.postValue(favoritesRequestParam)
+    fun getLiked(): LiveData<PagedList<ArticleDomainEntity>> {
+        if (::likedArticlesListSource.isInitialized.not())
+            likedArticlesListSource =
+                with(getArticlesAction.buildUseCase(favoritesRequestParam)) {
+                    LivePagedListBuilder(dataSource, pagingConfig)
+                        .setBoundaryCallback(boundaryCallback)
+                        .build()
+
+                }
+        return likedArticlesListSource
     }
 
     private fun clearAllLikes(executeTaskAfterLikesCleared: Callback? = null) {

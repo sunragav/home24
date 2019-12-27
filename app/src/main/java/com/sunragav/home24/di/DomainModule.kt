@@ -28,7 +28,6 @@ class DomainModule {
         return AndroidSchedulers.mainThread()
     }
 
-    @Singleton
     @Provides
     fun provideCompoisteDisposable() = CompositeDisposable()
 

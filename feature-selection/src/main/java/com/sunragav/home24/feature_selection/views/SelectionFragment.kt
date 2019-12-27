@@ -14,6 +14,7 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.viewpager2.widget.ViewPager2
 import com.sunragav.feature_selection.R
 import com.sunragav.feature_selection.databinding.FragmentSelectionBinding
+import com.sunragav.home24.android_utils.animation.Viewpager2CustomDepthTransformation
 import com.sunragav.home24.domain.models.RepositoryState
 import com.sunragav.home24.domain.models.RepositoryState.Companion.CONNECTED
 import com.sunragav.home24.domain.models.RepositoryState.Companion.DB_ERROR
@@ -50,7 +51,10 @@ class SelectionFragment : Fragment() {
 
     private lateinit var viewPager: ViewPager2
 
-    private lateinit var binding:FragmentSelectionBinding
+    private lateinit var binding: FragmentSelectionBinding
+
+    @Inject
+    lateinit var customDepthTransformation: Viewpager2CustomDepthTransformation
 
     override fun onAttach(context: Context) {
         AndroidSupportInjection.inject(this)
@@ -77,23 +81,20 @@ class SelectionFragment : Fragment() {
         binding.viewModel = viewModel
 
 
-        startListeningToRepoState()
 
 
 
         initViewPager()
 
+        initAdapter()
+        binding.clickListener = ClickListener(
+            viewPager = viewPager,
+            viewModel = viewModel
+        )
 
+        initViewModel()
 
-        initViewModel {
-
-            initAdapter()
-            binding.clickListener = ClickListener(
-                viewPager = viewPager,
-                viewModel = viewModel
-            )
-
-        }
+        startListeningToRepoState()
 
 
         return binding.root
@@ -156,19 +157,19 @@ class SelectionFragment : Fragment() {
         disposable.add(subscription)
     }
 
-    private fun initViewModel(postViewModelInitExecute: () -> Unit) {
-        viewModel.init {
-            postViewModelInitExecute.invoke()
+    private fun initViewModel() {
+        viewModel.init()
 
-            viewModel.currentItem.observe(this, Observer {
-                if (it == 0) viewModel.isUndoShowable.set(false)
-            })
-        }
+        viewModel.currentItem.observe(this, Observer {
+            if (it == 0) viewModel.isUndoShowable.set(false)
+        })
+
     }
 
     private fun initViewPager() {
         viewPager.isUserInputEnabled = false
         viewPager.currentItem = 0
+        viewPager.setPageTransformer(customDepthTransformation)
     }
 
     private fun initAdapter() {

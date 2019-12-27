@@ -9,12 +9,14 @@
             type="com.sunragav.home24.feature_selection.viewpager.bindings.ArticleBindingModel" />
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <androidx.cardview.widget.CardView
+        app:cardCornerRadius="20dp"
+        android:elevation="10dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         <androidx.appcompat.widget.AppCompatImageView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:bigImageUrl="@{binder.imageUrl}" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
 </layout>

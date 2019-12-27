@@ -3,8 +3,8 @@ package com.sunragav.home24.feature_selection.views.listeners
 import android.view.View
 import androidx.navigation.findNavController
 import androidx.viewpager2.widget.ViewPager2
-import com.sunragav.feature_selection.R
 import com.sunragav.home24.feature_selection.viewpager.adapter.PagedArticlesAdapter
+import com.sunragav.home24.feature_selection.views.SelectionFragmentDirections
 import com.sunragav.home24.presentation.viewmodels.ArticlesViewModel
 
 class ClickListener(
@@ -45,6 +45,8 @@ class ClickListener(
     }
 
     fun onReview(view: View) {
-        view.findNavController().navigate(R.id.action_selectionFragment_to_reviewFragment)
+        val action = SelectionFragmentDirections.actionSelectionFragmentToReviewFragment()
+        val navController = view.findNavController()
+        navController.navigate(action)
     }
 }

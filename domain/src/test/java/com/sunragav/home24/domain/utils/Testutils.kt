@@ -11,7 +11,8 @@ class TestDataContainer {
                 sku = "143",
                 imageUrl = "thumbnail.jpg",
                 flagged = false,
-                title = "Fake title"
+                title = "Fake title",
+                reviewed = false
             )
         }
     }
