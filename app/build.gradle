@@ -108,6 +108,9 @@ dependencies {
     implementation "androidx.navigation:navigation-fragment-ktx:$navVersion"
     implementation "androidx.navigation:navigation-ui-ktx:$navVersion"
 
+    implementation "androidx.paging:paging-runtime:$archPagingVersion"
+    implementation "androidx.paging:paging-runtime-ktx:$archPagingVersion"
+
     implementation "com.jakewharton.rxrelay2:rxrelay:$rxRelayVersion"
 
     implementation "org.jetbrains.kotlin:kotlin-reflect:1.1.0"

@@ -17,7 +17,10 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        app:layout_height="@{viewModel.isListView() ? @dimen/list_item_layout_height : @dimen/grid_item_layout_height }"
+        tools:ignore="ExtraText">
+        >
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -86,7 +89,7 @@
                 android:layout_marginEnd="8dp"
                 android:elevation="11dp"
                 android:src="@drawable/ic_like_heart"
-                android:visibility="@{binder.liked.booleanValue()}"
+                android:visibility="@{binder.liked.booleanValue()?View.VISIBLE:View.GONE}"
                 app:layout_constraintEnd_toEndOf="@+id/cv_imageViewContatiner"
                 app:layout_constraintTop_toTopOf="@+id/cv_imageViewContatiner" />
 

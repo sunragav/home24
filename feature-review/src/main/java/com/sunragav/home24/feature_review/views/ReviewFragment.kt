@@ -16,7 +16,6 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.sunragav.feature_review.R
 import com.sunragav.feature_review.databinding.FragmentReviewBinding
-import com.sunragav.home24.domain.models.RepositoryState
 import com.sunragav.home24.domain.models.RepositoryState.Companion.CONNECTED
 import com.sunragav.home24.domain.models.RepositoryState.Companion.DB_ERROR
 import com.sunragav.home24.domain.models.RepositoryState.Companion.DISCONNECTED
@@ -47,13 +46,15 @@ class ReviewFragment : Fragment() {
     lateinit var binding: FragmentReviewBinding
 
     private lateinit var recyclerView: RecyclerView
-    private lateinit var pagedArticlesAdapter: PagedArticlesAdapter
+    private lateinit var listPagedArticlesAdapter: PagedArticlesAdapter
+    private lateinit var gridPagedArticlesAdapter: PagedArticlesAdapter
 
     @Inject
     lateinit var repositoryStateRelay: RepositoryStateRelay
 
     @Inject
     lateinit var disposable: CompositeDisposable
+
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -74,55 +75,81 @@ class ReviewFragment : Fragment() {
         }
 
         recyclerView = binding.rvArticlesList
-
-        val decoration = DividerItemDecoration(activity, DividerItemDecoration.VERTICAL)
-        binding.rvArticlesList.addItemDecoration(decoration)
-        binding.rvArticlesList.setHasFixedSize(true)
-        binding.rvArticlesList.layoutManager = GridLayoutManager(activity, 1)
-        initViewModel()
-
-        initAdapter()
-        startListeningToRepoState()
         val gridLayout = GridLayoutManager(activity, 2)
         val listLayout = GridLayoutManager(activity, 1)
 
+        val decoration = DividerItemDecoration(activity, DividerItemDecoration.VERTICAL)
+        with(recyclerView) {
+            addItemDecoration(decoration)
+            setHasFixedSize(true)
+            layoutManager = listLayout
+            //itemAnimator = null
+        }
+        startListeningToRepoState()
+        initViewModel()
+
+        initAdapter()
+        initListPagedListObserver()
+        initGridPagedListObserver()
+
 
         binding.clickHandler = ClickListener(viewModel, {
-            viewModel.articlesListSource.removeObservers(this)
-            viewModel.getReviewed()
-            initPagedListObserver()
-            binding.rvArticlesList.layoutManager = listLayout
-
+            with(recyclerView) {
+                recycledViewPool.clear()
+                scrollToPosition(0)
+                adapter = listPagedArticlesAdapter
+                layoutManager = listLayout
+            }
+            viewModel.reviewedArticlesListSource.removeObservers(this)
+            initListPagedListObserver()
         }) {
-            viewModel.articlesListSource.removeObservers(this)
-            viewModel.getLiked()
-            initPagedListObserver()
-            binding.rvArticlesList.layoutManager = gridLayout
+            with(recyclerView) {
+                recycledViewPool.clear()
+                scrollToPosition(0)
+                adapter = gridPagedArticlesAdapter
+                layoutManager = gridLayout
+            }
+            viewModel.likedArticlesListSource.removeObservers(this)
+            initGridPagedListObserver()
         }
         return binding.root
     }
 
     private fun initViewModel() {
+        viewModel.getReviewed()
+        viewModel.getLiked()
         repositoryStateRelay.relay.accept(EMPTY)
     }
 
 
     private fun initAdapter() {
 
-        pagedArticlesAdapter = PagedArticlesAdapter(
+        listPagedArticlesAdapter = PagedArticlesAdapter(
             ArticleUIModelMapper(), viewModel
         )
-        recyclerView.adapter = pagedArticlesAdapter
-        initPagedListObserver()
+
+        gridPagedArticlesAdapter = PagedArticlesAdapter(
+            ArticleUIModelMapper(), viewModel
+        )
+
+        //By default adapter is List view layout adapter
+        recyclerView.adapter = listPagedArticlesAdapter
     }
 
-    private fun initPagedListObserver() {
-        viewModel.articlesListSource.observe(this, Observer {
-            if (it.size > 0) {
-                repositoryStateRelay.relay.accept(RepositoryState.UI_LOADED)
+    private fun initListPagedListObserver() {
+        viewModel.reviewedArticlesListSource.observe(this, Observer { pagedList ->
+            if (pagedList.size > 0) {
                 viewModel.isLoading.set(false)
-                pagedArticlesAdapter.submitList(it)
-                viewModel.articlesCount.postValue(pagedArticlesAdapter.itemCount)
+                listPagedArticlesAdapter.submitList(pagedList)
+            }
+        })
+    }
+
+    private fun initGridPagedListObserver() {
+        viewModel.likedArticlesListSource.observe(this, Observer { pagedList ->
+            if (pagedList.size > 0) {
+                viewModel.isLoading.set(false)
+                gridPagedArticlesAdapter.submitList(pagedList)
             }
         })
     }
@@ -165,11 +192,7 @@ class ReviewFragment : Fragment() {
                         .show()
                 }
                 EMPTY -> {
-                    val count = pagedArticlesAdapter.currentList?.size ?: 0
-                    if (count == 0) {
-                        viewModel.isLoading.set(true)
-                        viewModel.getReviewed()
-                    }
+                    viewModel.isLoading.set(true)
                 }
             }
 
@@ -179,7 +202,8 @@ class ReviewFragment : Fragment() {
 
     override fun onDetach() {
         super.onDetach()
-        viewModel.articlesListSource.removeObservers(this)
+        viewModel.likedArticlesListSource.removeObservers(this)
+        viewModel.reviewedArticlesListSource.removeObservers(this)
         disposable.dispose()
     }
 

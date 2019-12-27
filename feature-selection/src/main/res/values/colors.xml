@@ -13,5 +13,6 @@
     <color name="dlg_content_bg">#343434</color>
     <color name="dlg_content_text_color">#9FA09F</color>
     <color name="dlg_divider_color">#A29E9E</color>
+    <color name="viewpager_bg_color">#FF424242</color>
 
 </resources>
