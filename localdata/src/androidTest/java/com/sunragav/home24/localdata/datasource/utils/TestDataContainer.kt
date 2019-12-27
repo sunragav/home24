@@ -10,7 +10,8 @@ class TestDataContainer {
             return ArticleLocalData(
                 "143",
                 "Fake image",
-                true,"Fake title"
+                true, "Fake title",
+                false
             )
         }
 

@@ -9,7 +9,6 @@ import io.mockk.mockk
 import io.mockk.verify
 import io.reactivex.Completable
 import io.reactivex.Observable
-import io.reactivex.schedulers.Schedulers
 import org.junit.Before
 import org.junit.Test
 
@@ -19,13 +18,11 @@ class LocalRepositoryImplTest {
 
     private var articlesDAO: ArticlesDao = mockk()
     private var articleLocalMapper = ArticleLocalDataMapper()
-    private var backgroundThread = Schedulers.trampoline()
     @Before
     fun setup() {
         localDataSourceImpl = LocalRepositoryImpl(
             articleLocalMapper,
-            articlesDAO,
-            backgroundThread
+            articlesDAO
         )
     }
 

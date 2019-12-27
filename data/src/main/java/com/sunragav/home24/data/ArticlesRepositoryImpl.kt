@@ -3,7 +3,6 @@ package com.sunragav.home24.data
 import androidx.paging.PagedList
 import com.sunragav.home24.data.contract.LocalRepository
 import com.sunragav.home24.data.contract.RemoteRepository
-import com.sunragav.home24.data.contract.Request
 import com.sunragav.home24.domain.models.ArticleDomainEntity
 import com.sunragav.home24.domain.models.RepositoryState
 import com.sunragav.home24.domain.models.RepositoryStateRelay
@@ -103,13 +102,6 @@ class ArticlesRepositoryImpl @Inject constructor(
                 .andThen {
                     lastRequestedPage++
                     setRepositoryState(RepositoryState.DB_LOADED)
-                    localRepository.updatePreviousRequest(
-                        Request(
-                            0,
-                            lastRequestedPage,
-                            query.limit
-                        )
-                    )
                 }.subscribe()
         }
 

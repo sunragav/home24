@@ -16,8 +16,4 @@ interface LocalRepository {
     fun getArticleById(uniqueIdentifier: String): Observable<ArticleDomainEntity>
     fun update(articleEntity: ArticleDomainEntity): Completable
     fun clearAllLikes(): Maybe<Int>
-
-    fun getPreviousRequest(): Maybe<Request>
-    fun updatePreviousRequest(request: Request): Completable
-    fun clearPreviousRequest():Completable
 }

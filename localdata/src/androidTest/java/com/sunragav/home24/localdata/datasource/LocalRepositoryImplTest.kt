@@ -93,10 +93,11 @@ class ArticlesDAOTest {
     }
 
     @Test
-    fun test_clearArticlesTable() {
+    fun test_clearLikesFromArticles() {
         val articlesList = TestDataContainer.getArticles()
 
-        articlesListDAO.insert(articlesList).subscribe()
+        val likedArticles = articlesList.map { it.copy(flagged = true, reviewed = true) }
+        articlesListDAO.insert(likedArticles).subscribe()
 
         var result =
             (articlesListDAO.getArticles().create() as LimitOffsetDataSource).loadRange(
@@ -112,7 +113,7 @@ class ArticlesDAOTest {
             0,
             LIMIT
         )
-        assertThat(result.size, equalTo(0))
+        assertThat(result.all { !it.flagged && !it.reviewed }, equalTo(true))
 
     }
 

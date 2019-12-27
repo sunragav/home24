@@ -19,7 +19,8 @@ class TestRemoteDataContainer {
                 sku="143",
                imageUrl = "Fake image",
                 flagged = false,
-                title = "Fake title"
+                title = "Fake title",
+                reviewed = false
             )
         }
 
