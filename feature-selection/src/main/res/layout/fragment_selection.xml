@@ -101,7 +101,7 @@
             app:layout_constraintTop_toTopOf="@+id/vp_articles" />
 
         <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/button"
+            android:id="@+id/btn_undo"
             android:layout_width="@dimen/like_button_size"
             android:layout_height="@dimen/like_button_size"
             android:layout_marginEnd="16dp"
@@ -199,7 +199,7 @@
                         tools:visibility="visible" />
 
                     <TextView
-                        android:id="@+id/like_count"
+                        android:id="@+id/tv_like_count"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:width="@dimen/like_button_size"
