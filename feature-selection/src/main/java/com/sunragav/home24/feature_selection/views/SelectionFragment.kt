@@ -108,19 +108,18 @@ class SelectionFragment : Fragment() {
                     viewModel.isLoading.set(false)
                 }
                 DISCONNECTED -> {
+                    val count = pagedArticlesAdapter.currentList?.size ?: 0
+                    if (count == 0) {
+                        viewModel.canNavigate.value = false
+                    }
                     Toast.makeText(
                         activity,
                         R.string.network_lost,
                         Toast.LENGTH_LONG
-                    )
+                    ).show()
                 }
                 RepositoryState.DB_CLEARED -> {
                     println("DB cleared successfully!!")
-                    Toast.makeText(
-                        activity,
-                        "DB successfully cleared",
-                        Toast.LENGTH_LONG
-                    )
                 }
                 DB_ERROR -> {
                     println("DB error!!")
@@ -128,11 +127,17 @@ class SelectionFragment : Fragment() {
                         activity,
                         R.string.db_error,
                         Toast.LENGTH_LONG
-                    )
+                    ).show()
                 }
                 CONNECTED -> {
+                    Toast.makeText(
+                        activity,
+                        R.string.network_regained,
+                        Toast.LENGTH_LONG
+                    ).show()
                     if (viewModel.isLoading.get() == true) {
                         viewModel.getModels()
+                        viewModel.canNavigate.value = true
                     }
                 }
                 ERROR -> {
@@ -141,8 +146,7 @@ class SelectionFragment : Fragment() {
                         activity,
                         R.string.network_error,
                         Toast.LENGTH_LONG
-                    )
-                        .show()
+                    ).show()
                 }
                 EMPTY -> {
                     val count = pagedArticlesAdapter.currentList?.size ?: 0

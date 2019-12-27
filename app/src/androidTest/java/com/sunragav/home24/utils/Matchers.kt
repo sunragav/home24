@@ -32,22 +32,5 @@ class CustomMatchers {
             }
         }
 
-        fun assignArticleAtPostion(position: Int, article: ArticleDomainEntity): Matcher<View> {
-            return object : BoundedMatcher<View, ViewPager2>(ViewPager2::class.java) {
-                override fun describeTo(description: Description) {
-                    description.appendText("has item at position $position: ")
-                    // itemMatcher.describeTo(description)
-                }
-
-                override fun matchesSafely(item: ViewPager2): Boolean {
-                    val adapter = (item.adapter as PagedArticlesAdapter)
-                    val viewItem =
-                        adapter.currentList?.get(position) as ArticleDomainEntity
-                    adapter.notifyDataSetChanged()
-
-                    return article.imageUrl == viewItem.imageUrl
-                }
-            }
-        }
     }
 }

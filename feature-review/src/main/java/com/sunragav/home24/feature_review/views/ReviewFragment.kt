@@ -175,7 +175,7 @@ class ReviewFragment : Fragment() {
                         activity,
                         R.string.db_error,
                         Toast.LENGTH_LONG
-                    )
+                    ).show()
                 }
                 CONNECTED -> {
                     if (viewModel.isLoading.get() == true) {
@@ -188,8 +188,7 @@ class ReviewFragment : Fragment() {
                         activity,
                         R.string.network_error,
                         Toast.LENGTH_LONG
-                    )
-                        .show()
+                    ).show()
                 }
                 EMPTY -> {
                     viewModel.isLoading.set(true)

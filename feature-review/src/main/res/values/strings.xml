@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">feature-review</string>
     <string name="review_fragment">review fragment</string>
-    <string name="network_lost">Sorry your network connection is lost</string>
-    <string name="network_error">Sorry there was a service error</string>
-    <string name="db_error">\"Sorry there was a DB error!!\"</string>
+    <string name="network_lost">😱 Oops! Your network connection is lost </string>
+    <string name="network_error">😱 Oops! There was a network error! Please retry after sometime. </string>
+    <string name="db_error">😱 Oops! There was a DB error!! </string>
 </resources>
