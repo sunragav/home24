@@ -3,20 +3,20 @@ package com.sunragav.home24.feature_selection.views
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.ActivityNavigator
-import androidx.navigation.findNavController
 import com.sunragav.feature_selection.R
+import com.sunragav.home24.domain.models.RepositoryStateRelay
+import dagger.android.AndroidInjection
+import javax.inject.Inject
 
 class FeatureActivity : AppCompatActivity() {
 
+    @Inject
+    lateinit var repositoryStateRelay: RepositoryStateRelay
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_feature)
-        findNavController(R.id.nav_container).navigate(R.id.startFragment)
-    }
-
-    override fun onBackPressed() {
-        super.onBackPressed()
+        AndroidInjection.inject(this)
     }
 
     override fun finish() {
