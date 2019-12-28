@@ -153,6 +153,7 @@ The onClick listener handles the like, dislike and the review button clicks. It 
 On reaching the reviewCount or when the list is exhausted which ever happens first , "congrats" layout is displayed along with a review-button(star shaped button) to navigate to the review screen. 
 The onReview btn click event uses the navigation component to perform the navigation in the navhost fragment layout of the FeatureActivity. 
 The review screen displays the reviewed articles in the list and gridview layouts which are triggerd by the two buttons in the upper right corner of the review screen.
+Thanks to the navigation component, the whole navigation is controlled via the navigation graph xml file, by setting the appropriate popup action attributes so as to maintain a clean backstack, without any code. 
 
 I hope you understand my effort. Please feel free to reach out to me for any questions. My email id is sunragav@gmail.com. Mobile: +49 15127928882
 Linkedin: https://www.linkedin.com/in/sunragav/
