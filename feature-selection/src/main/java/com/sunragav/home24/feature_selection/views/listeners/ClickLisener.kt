@@ -6,9 +6,10 @@ import androidx.viewpager2.widget.ViewPager2
 import com.sunragav.home24.feature_selection.viewpager.adapter.PagedArticlesAdapter
 import com.sunragav.home24.feature_selection.views.SelectionFragmentDirections
 import com.sunragav.home24.presentation.viewmodels.ArticlesViewModel
+import java.lang.ref.WeakReference
 
 class ClickListener(
-    private val viewPager: ViewPager2,
+    private val viewPagerRef: WeakReference<ViewPager2>,
     private val viewModel: ArticlesViewModel
 ) {
     fun onLiked(view: View) {
@@ -17,6 +18,7 @@ class ClickListener(
     }
 
     fun onUndo(view: View) {
+        val viewPager = viewPagerRef.get()!!
         if (viewPager.currentItem > 0) {
             viewPager.currentItem--
             viewModel.currentItem.value = viewPager.currentItem
@@ -24,6 +26,7 @@ class ClickListener(
     }
 
     private fun navigateToNext(liked: Boolean) {
+        val viewPager = viewPagerRef.get()!!
         if (viewModel.isReadyToReview.get() == false && viewModel.canNavigate.value == true) {
             with(viewPager) {
                 val pagedArticlesAdapter = (adapter as PagedArticlesAdapter)

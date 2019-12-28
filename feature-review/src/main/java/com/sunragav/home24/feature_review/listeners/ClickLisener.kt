@@ -5,16 +5,16 @@ import com.sunragav.home24.presentation.viewmodels.ArticlesViewModel
 
 class ClickListener(
     private val viewModel: ArticlesViewModel,
-    private val listView: () -> Unit,
-    private val gridView: () -> Unit
+    private val listViewUIHandler: () -> Unit,
+    private val gridViewUIHandler: () -> Unit
 ) {
     fun onListView(view: View) {
         viewModel.isListView.set(true)
-        listView.invoke()
+        listViewUIHandler.invoke()
     }
 
     fun onGridView(view: View) {
         viewModel.isListView.set(false)
-        gridView.invoke()
+        gridViewUIHandler.invoke()
     }
 }
