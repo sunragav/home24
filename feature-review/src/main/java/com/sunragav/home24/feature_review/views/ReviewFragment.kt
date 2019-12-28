@@ -47,7 +47,6 @@ class ReviewFragment : Fragment() {
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var listPagedArticlesAdapter: PagedArticlesAdapter
-    private lateinit var gridPagedArticlesAdapter: PagedArticlesAdapter
 
     @Inject
     lateinit var repositoryStateRelay: RepositoryStateRelay
@@ -83,27 +82,23 @@ class ReviewFragment : Fragment() {
             addItemDecoration(decoration)
             setHasFixedSize(true)
             layoutManager = listLayout
-            //itemAnimator = null
+            //  itemAnimator = null
         }
         startListeningToRepoState()
 
         initAdapter()
         initListPagedListObserver()
-        initGridPagedListObserver()
-
 
         binding.clickHandler = ClickListener(viewModel, {
             with(recyclerView) {
                 recycledViewPool.clear()
                 scrollToPosition(0)
-                adapter = listPagedArticlesAdapter
                 layoutManager = listLayout
             }
         }) {
             with(recyclerView) {
                 recycledViewPool.clear()
                 scrollToPosition(0)
-                adapter = gridPagedArticlesAdapter
                 layoutManager = gridLayout
             }
         }
@@ -116,10 +111,6 @@ class ReviewFragment : Fragment() {
             articleUIModelMapper, viewModel
         )
 
-        gridPagedArticlesAdapter = PagedArticlesAdapter(
-            articleUIModelMapper, viewModel
-        )
-
         //By default adapter is List view layout adapter
         recyclerView.adapter = listPagedArticlesAdapter
     }
@@ -129,15 +120,6 @@ class ReviewFragment : Fragment() {
             if (pagedList.size > 0) {
                 viewModel.isLoading.set(false)
                 listPagedArticlesAdapter.submitList(pagedList)
-            }
-        })
-    }
-
-    private fun initGridPagedListObserver() {
-        viewModel.getLiked().observe(this, Observer { pagedList ->
-            if (pagedList.size > 0) {
-                viewModel.isLoading.set(false)
-                gridPagedArticlesAdapter.submitList(pagedList)
             }
         })
     }
@@ -195,7 +177,6 @@ class ReviewFragment : Fragment() {
 
             override fun onViewDetachedFromWindow(v: View) {
                 listPagedArticlesAdapter.submitList(null)
-                gridPagedArticlesAdapter.submitList(null)
                 recyclerView.adapter = null
             }
         })
@@ -205,7 +186,6 @@ class ReviewFragment : Fragment() {
 
     override fun onDetach() {
         super.onDetach()
-        viewModel.getLiked().removeObservers(this)
         viewModel.getReviewed().removeObservers(this)
         disposable.dispose()
     }

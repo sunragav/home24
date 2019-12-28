@@ -132,17 +132,6 @@ open class ArticlesViewModel @Inject internal constructor(
         return reviewedArticlesListSource
     }
 
-    fun getLiked(): LiveData<PagedList<ArticleDomainEntity>> {
-            likedArticlesListSource =
-                with(getArticlesAction.buildUseCase(favoritesRequestParam)) {
-                    LivePagedListBuilder(dataSource, pagingConfig)
-                        .setBoundaryCallback(boundaryCallback)
-                        .build()
-
-                }
-        return likedArticlesListSource
-    }
-
     private fun clearAllLikes(executeTaskAfterLikesCleared: Callback? = null) {
         canNavigate.value = false
         clearAllLikesAction.buildUseCase()
