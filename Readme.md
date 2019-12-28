@@ -1,3 +1,4 @@
+# Home24 App
 The app starts with a splash screen followed by a screen with a start button. Clicking on the start button, displays a list of article images by consuming the home24 api. 
 The user can click like or dislike button and on reaching a threshold (reviewCount) configured in the gradle.properties, the user will be presented with a overlay showing that he has completed the survey 
 and a button to go to the review screen. In the review screen, the user can see all the items he reviewed(liked and disliked both with image and title)in a list view,
@@ -14,30 +15,30 @@ The project was developed and tested using Android studio 3.5.3.
 It uses code generation libraries like Dagger2, Databinding, Room. So please kindly gradle-sync the project first and build it once. 
 Else you might find unknown symbol references in the code base. If required, "invalidate caches and restart" using the 'File' menu option in the Android studio.
 
-The project features:
-Kotlin
-Rxjava2
-RxRelay
-Dagger2 (Dependency injection)
-Coroutines (extension)
-Glide (Image library)
-Navigation (Android architecture component from jetpack)
-DataBinding (Android architecture component from jetpack)
-ViewModel (Android architecture component from jetpack)
-LiveDate, MediatorLivedata, Mutablelivedata (Android architecture component from jetpack)
-PagedList (Android architecture component from jetpack)
-Room (SQLite backed DB for persistence and the automatic PagedList DataSource support using paging library's BoundaryCallback)
-Retrofit2 (For service calls)
-okHttp (For Network layer, intercepting http logs and intercepting to add apiKey to query parameters for every service call, we make)
-Espresso (AndroidJUnit4ClassRunner for UITests)
-JUnit4 (For unit tests)
-Instrumentation tests for the RoomDB Dao classes
-ViewPager2 (with a custom transform animation for page flipping)
-Recyclerview
+## The project features:
+[] Kotlin
+[] Rxjava2
+[] RxRelay
+[] Dagger2 (Dependency injection)
+[] Coroutines (extension)
+[] Glide (Image library)
+[] Navigation (Android architecture component from jetpack)
+[] DataBinding (Android architecture component from jetpack)
+[] ViewModel (Android architecture component from jetpack)
+[] LiveDate, MediatorLivedata, Mutablelivedata (Android architecture component from jetpack)
+[] PagedList (Android architecture component from jetpack)
+[] Room (SQLite backed DB for persistence and the automatic PagedList DataSource support using paging library's BoundaryCallback)
+[] Retrofit2 (For service calls)
+[] okHttp (For Network layer, intercepting http logs and intercepting to add apiKey to query parameters for every service call, we make)
+[] Espresso (AndroidJUnit4ClassRunner for UITests)
+[] JUnit4 (For unit tests)
+[] Instrumentation tests for the RoomDB Dao classes
+[] ViewPager2 (with a custom transform animation for page flipping)
+[] Recyclerview
 
 The project uses the famous uncle Bob's CLEAN architecture.
 
-The project has been split into 10 modules, listed below from top-down order according to the application flow:
+## The project has been split into 10 modules, listed below from top-down order according to the application flow:
 
 1. app  -  Android app module which has a SplashActivity and the UI tests (espresso) and the necessary dependency injection for the entire app,
 	It is the module which has application class and provides the dependency injection for all the other modules using Dagger2.
@@ -100,7 +101,7 @@ The relay is basically pushed from 2 places:
 1. FeatureActivity - sets the initial state to EMPTY and then pushes the CONNECTED/ DISCONNECTED state based on the connection availability.
 2. ArticlesBoundaryCallback - sets the LOADING/LOADED/ERROR state based on the service API call status. 
 
-The following are the android modules:
+## The following are the android modules:
 app  (includes the UI test for the feature module and dagger dependency injection modules and the application component)
 feature-selection (contains the UI for the feature)
 feature-review (contains the UI for the feature)
@@ -108,7 +109,7 @@ presentation (contains the viewmodel)
 android-utils (contains the connectivity state change helper)
 localdata ( contains the roomdb. It has both instrumentation test and the unit tests)
 
-The following are the kotlin library modules:
+## The following are the kotlin library modules:
 domain (contains the use cases. It has the unit tests covering all the use cases)
 local ( It is an implementation of the repository pattern. It supplies data to the domain with out revealing the source of the data. It has unit tests.)
 remotedata ( It is the service layer implemented using the retrofit and okhttp library. 
@@ -121,7 +122,7 @@ The versions of all the external libraries used are maintained in the versions.g
 So we can fiddle with the various library versions, and also the minSdk, targetSdk and compileSdk versions easily.
 
 
-The application code flow:
+## The application code flow:
 The app starts with a splash activity in the 'app' module  and after a delay launches the FeatureActivity in the 'feature-selection' module. 
 The activity then sets listeners to the connectivity changes to communicate to the other systems via the RepositoryStateRelay.
 It uses the navHostFragment of the navigation component to deal with these fragment transactions.
@@ -158,8 +159,9 @@ The onReview btn click event uses the navigation component to perform the naviga
 The review screen displays the reviewed articles in the list and gridview layouts which are triggerd by the two buttons in the upper right corner of the review screen.
 Thanks to the navigation component, the whole navigation is controlled via the navigation graph xml file, by setting the appropriate popup action attributes so as to maintain a clean backstack, without any code. 
 The logic of not displaying the title in the grid layout is handled using the data binding, eliminating the need for a separate layout file for each mode(list/gird).
-I hope you understand my effort. Please feel free to reach out to me for any questions. My email id is sunragav@gmail.com. Mobile: +49 15127928882
-Linkedin: https://www.linkedin.com/in/sunragav/
+I hope you understand my effort. Please feel free to reach out to me for any questions. 
+
+## My email id is sunragav@gmail.com. Mobile: +49 15127928882 [Linkedin](https://www.linkedin.com/in/sunragav/)
 
 
 
