@@ -7,7 +7,7 @@ The user can toggle between the list view and grid view as many no.of times he w
 the user left earlier from selection screen. On pressing back one more time, will take him back to the start button screen where he can start a fresh review again. 
 Every time the user clicks start button all the likes from the previous selection session will be cleared.
 
-![Home24 App Screen capture](https://gph.is/g/ajjoYj8)
+![Home24 App Screen capture](https://media.giphy.com/media/iFmbvIC4hvyhYeCY7a/giphy.gif)
 
 To change the no. of articles in each review, you have to change the value of reviewCount in the gradle.properties file and rebuild the project.
 The build config in the app modules uses the gradle.properties to generated the BuildConfig class file with all the constants configured in the app.gradle file. The dagger2 injects the reviewCount constant
