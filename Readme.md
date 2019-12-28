@@ -1,6 +1,6 @@
 The app starts with a splash screen followed by a screen with a start button. Clicking on the start button, displays a list of article images by consuming the home24 api. The user can click like or dislike button and on reaching a threshold (reviewCount) configured in the gradle.properties,
 the user will be presented with the review screen. In the review screen, the user can see all the items he reviewed(liked and disliked both with image and title)in a list view,
-or in a grid view ( with only liked and only images without title). The user can toggle between the list view and grid view as many no.of times he wants and when he press back he goes back to the start screen
+or in a grid view ( with only images without title). The user can toggle between the list view and grid view as many no.of times he wants and when he press back he goes back to the start screen
 where he can start a fresh review again. To change the no. of articles in each review, you have to change the value of reviewCount in the gradle.properties file and rebuild the project.
 
 The project was developed and tested using Android studio 3.5.3.  
@@ -56,7 +56,7 @@ The project has been split into 10 modules, listed below from top-down order acc
 	The 'feature-selection' module also uses the navigation component for the navigation of the screens. 
 	It uses the data binding to bind the data it got from the viewmodel to the actual view, reducing much of the boiler plate code. 
 
-3. feature-review screen uses two pagelist adapters, one for the list view and one for the grid view. It loads the reviewed articles ( liked and disliked) with an image and title text . It manages the difference in the list and grid view requirements in the layout file itself with data binding expressions. It uses two different datasources from the viewmodel. One for loading the reviewed articles and the other for loading the likes articles.
+3. feature-review screen uses two pagelist adapters, one for the list view and one for the grid view. It loads the reviewed articles ( liked and disliked) with an image and title text . It manages the difference in the list and grid view requirements in the layout file itself with data binding expressions.
 
 4. presentation - Android library module. This module has the ViewModel component which survives the lifecycle changes and provides the UI layer ('feature-selection' and 'feature-review' modules)
 	with the fresh PagedList for items via LiveData to bind with the UI. It uses coroutines to do the room operations in bgscope. It also maintains the state for the progress bar layout which the UI layer uses to bind using the data binding component. When the "get-articles" action is triggered by the UI, the viewmodel uses the use case from the 'domain' layer to fetch the new DataSourceFactory from the room db. Along with datasource it also fetches the BoundaryCallback implementation from the 'data' module in the same call. The data source together with the boundary callback is then used to create a LivedData of paged list which will be observed by the 'feature-selection' layer. 
@@ -132,8 +132,8 @@ viewpager2's adapter to render the view. Now there are two cases either there is
 The BoundaryCallback handles these 2 cases via the onZeroitemLoaded and the onItemAtEndLoaded. Both cases triggers an API call action which is performed via
 ArticleService defined in the 'remotedata' layer. The BoundaryCallback is in the 'data' module which is a repository abstraction layer. 
 It sets the RepositoryStateRelay to LOADING state so that the SelectionFeatureFragment in the 'feature' module can display the progressbar.
-The SelectionFeatureFragment handles this by setting the isLoading Observable in the viewmodel which is binded to the progressbar view in the layout
-via databinding.
+The SelectionFeatureFragment handles this by setting the isLoading Observable in the viewmodel which is bound to the progressbar view in the layout
+via data binding.
 Once the service call completes the control, comes back to the 'data' module which updates the result in the room db in 'localdb' module. 
 And then the network state is set to LOADED state so the ui layer ('feature' module) can stop the progressbar. At the same time, the updating of the result in the
 room db triggers an event in the Datasource listened by the viewmodel via the livedata and communicated to the observer in the SelectionFeatureFragment
@@ -142,7 +142,7 @@ When the user clicks on an like/dislike, onClick listener is triggered. The data
 ClickListener class class. 
 The onClick listener handles the like, dislike and the review button clicks. It calls the viewmodel's handleLikeDislike method to update the like counter displayed in the bottom.
 The onClick uses the navigation component to perform the navigation in the navhost fragment layout ofthe FeatureActivity. 
-On reaching the reviewCount or when the list is exhausted which ever happens first , congrats layout is displayed along with a button to navigate to the review screen. This is  handled using the navigation component.
+On reaching the reviewCount or when the list is exhausted which ever happens first , "congrats" layout is displayed along with a button to navigate to the review screen. This is  handled using the navigation component.
 
 
 

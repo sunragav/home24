@@ -113,7 +113,6 @@ open class ArticlesViewModel @Inject internal constructor(
             canNavigate.value = true
             repositoryStateRelay.relay.accept(EMPTY)
         }
-
     }
 
 
