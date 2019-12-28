@@ -16,25 +16,25 @@ It uses code generation libraries like Dagger2, Databinding, Room. So please kin
 Else you might find unknown symbol references in the code base. If required, "invalidate caches and restart" using the 'File' menu option in the Android studio.
 
 ## The project features:
-[.] Kotlin
-[.] Rxjava2
-[.] RxRelay
-[.] Dagger2 (Dependency injection)
-[.] Coroutines (extension)
-[.] Glide (Image library)
-[.] Navigation (Android architecture component from jetpack)
-[.] DataBinding (Android architecture component from jetpack)
-[.] ViewModel (Android architecture component from jetpack)
-[.] LiveDate, MediatorLivedata, Mutablelivedata (Android architecture component from jetpack)
-[.] PagedList (Android architecture component from jetpack)
-[.] Room (SQLite backed DB for persistence and the automatic PagedList DataSource support using paging library's BoundaryCallback)
-[.] Retrofit2 (For service calls)
-[.] okHttp (For Network layer, intercepting http logs and intercepting to add apiKey to query parameters for every service call, we make)
-[.] Espresso (AndroidJUnit4ClassRunner for UITests)
-[.] JUnit4 (For unit tests)
-[.] Instrumentation tests for the RoomDB Dao classes
-[.] ViewPager2 (with a custom transform animation for page flipping)
-[.] Recyclerview
+[x] Kotlin
+[x] Rxjava2
+[x] RxRelay
+[x] Dagger2 (Dependency injection)
+[x] Coroutines (extension)
+[x] Glide (Image library)
+[x] Navigation (Android architecture component from jetpack)
+[x] DataBinding (Android architecture component from jetpack)
+[x] ViewModel (Android architecture component from jetpack)
+[x] LiveDate, MediatorLivedata, Mutablelivedata (Android architecture component from jetpack)
+[x] PagedList (Android architecture component from jetpack)
+[x] Room (SQLite backed DB for persistence and the automatic PagedList DataSource support using paging library's BoundaryCallback)
+[x] Retrofit2 (For service calls)
+[x] okHttp (For Network layer, intercepting http logs and intercepting to add apiKey to query parameters for every service call, we make)
+[x] Espresso (AndroidJUnit4ClassRunner for UITests)
+[x] JUnit4 (For unit tests)
+[x] Instrumentation tests for the RoomDB Dao classes
+[x] ViewPager2 (with a custom transform animation for page flipping)
+[x] Recyclerview
 
 The project uses the famous uncle Bob's CLEAN architecture.
 
