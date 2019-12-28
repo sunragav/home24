@@ -46,7 +46,7 @@ The project uses the famous uncle Bob's CLEAN architecture.
 	It is the module which has application class and provides the dependency injection for all the other modules using Dagger2.
 	The android test folder mocks the "Dagger-Modules":  Remote, Local and Domain and overrides the retrofit fit service to provide the data from
 	a fake service, "FakeArticleService". It also implements a RepositoryStateIdlingResource to trigger the UI testing only after the network state is LOADED and the UI is in an idle testable state. After a short delay the SplashActivity in this module will launch the FeatureActivity from the feature-selection module.
-
+![UI tests](https://i.imgur.com/1iaqn3k.jpg)
 2. feature-selection - Android Library module. This is the feature module and contains all the UI logic+layouts for the selection screen.
 
 	It consumes the ViewModel from the 'presentation' module and listens  to the various network states that the 'data' module emits and reacts to them by updating the UI appropriately.
@@ -177,6 +177,10 @@ The review screen displays the reviewed articles in the list and gridview layout
 Thanks to the navigation component, the whole navigation is controlled via the navigation graph xml file, by setting the appropriate popup action attributes so as to maintain a clean backstack, without any code. 
 The logic of not displaying the title in the grid layout is handled using the data binding, eliminating the need for a separate layout file for each mode(list/gird).
 
+### Data binding
+![Data binding](https://i.imgur.com/0X2l9r4.png)
+### Navigation graph
+![Navigation graph](https://i.imgur.com/IxHK0Md.gif)
 
 
 
