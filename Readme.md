@@ -39,6 +39,7 @@ Else you might find unknown symbol references in the code base. If required, "in
 - [x] Recyclerview
 
 The project uses the famous uncle Bob's CLEAN architecture.
+
 ![Clean architecture](https://i.imgur.com/fkgyKGt.jpg)
 ## The project has been split into 10 modules, listed below from top-down order according to the application flow:
 
