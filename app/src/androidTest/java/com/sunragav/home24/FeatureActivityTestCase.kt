@@ -23,7 +23,7 @@ import org.junit.runner.RunWith
 import javax.inject.Inject
 
 @RunWith(AndroidJUnit4ClassRunner::class)
-class ComicsListFeatureActivityTest @Inject constructor() {
+class ArticlesListFeatureActivityTest @Inject constructor() {
 
     @get:Rule
     val rule = ActivityTestRule<FeatureActivity>(FeatureActivity::class.java)
