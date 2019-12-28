@@ -16,25 +16,25 @@ It uses code generation libraries like Dagger2, Databinding, Room. So please kin
 Else you might find unknown symbol references in the code base. If required, "invalidate caches and restart" using the 'File' menu option in the Android studio.
 
 ## The project features:
-[+] Kotlin
-[+] Rxjava2
-[+] RxRelay
-[+] Dagger2 (Dependency injection)
-[+] Coroutines (extension)
-[+] Glide (Image library)
-[+] Navigation (Android architecture component from jetpack)
-[+] DataBinding (Android architecture component from jetpack)
-[+] ViewModel (Android architecture component from jetpack)
-[+] LiveDate, MediatorLivedata, Mutablelivedata (Android architecture component from jetpack)
-[+] PagedList (Android architecture component from jetpack)
-[+] Room (SQLite backed DB for persistence and the automatic PagedList DataSource support using paging library's BoundaryCallback)
-[+] Retrofit2 (For service calls)
-[+] okHttp (For Network layer, intercepting http logs and intercepting to add apiKey to query parameters for every service call, we make)
-[+] Espresso (AndroidJUnit4ClassRunner for UITests)
-[+] JUnit4 (For unit tests)
-[+] Instrumentation tests for the RoomDB Dao classes
-[+] ViewPager2 (with a custom transform animation for page flipping)
-[+] Recyclerview
+[.] Kotlin
+[.] Rxjava2
+[.] RxRelay
+[.] Dagger2 (Dependency injection)
+[.] Coroutines (extension)
+[.] Glide (Image library)
+[.] Navigation (Android architecture component from jetpack)
+[.] DataBinding (Android architecture component from jetpack)
+[.] ViewModel (Android architecture component from jetpack)
+[.] LiveDate, MediatorLivedata, Mutablelivedata (Android architecture component from jetpack)
+[.] PagedList (Android architecture component from jetpack)
+[.] Room (SQLite backed DB for persistence and the automatic PagedList DataSource support using paging library's BoundaryCallback)
+[.] Retrofit2 (For service calls)
+[.] okHttp (For Network layer, intercepting http logs and intercepting to add apiKey to query parameters for every service call, we make)
+[.] Espresso (AndroidJUnit4ClassRunner for UITests)
+[.] JUnit4 (For unit tests)
+[.] Instrumentation tests for the RoomDB Dao classes
+[.] ViewPager2 (with a custom transform animation for page flipping)
+[.] Recyclerview
 
 The project uses the famous uncle Bob's CLEAN architecture.
 
@@ -128,14 +128,20 @@ The activity then sets listeners to the connectivity changes to communicate to t
 It uses the navHostFragment of the navigation component to deal with these fragment transactions.
 The FeatureActivity sets the StartFragment as the starting screen. On clicking the start button, viewmodel's init() is called which clears all the likes if any made in an earlier session.
 After clearing all the likes, the selection screen is launched using navigation component.
-Selection fragment subscribes to the articles list livedata of datasource and the livedata of currentItem.
+Selection fragment subscribes to the 
+* articles paged list livedata of datasource-factory  
+* livedata of currentItem.
 
 The SelectionFeatureFragment listens to the network state changes and as it receives the EMPTY state, it loads the datasource factory with the current query set. 
 The default is to fetch from network, and then to update db which the pagedlist is listening to.
+
 The query is sent to viewmodel in the 'presentation' module, the viewmodel uses the GetArticlesListAction usecase from the 'domain' module.
 The GetArticlesListAction uses the ArticlesRepository defined in the 'data' module to get the DatasourceFactory and the BoundaryCallback necessary for generating
-the LiveData of Pagelist of ArticleDomainEntity to be displayed in the list view. The BoundaryCallback is defined in the 'data' module itself,
-where as the DatasourceFactory comes from the Room DB query and is defined in the 'localdata' module. Each query generates a new DatasourceFactory.
+the LiveData of Pagelist of ArticleDomainEntity to be displayed in the list view. 
+
+The BoundaryCallback is defined in the 'data' module itself,where as the DatasourceFactory comes from the Room DB query and is defined in the 'localdata' module. 
+
+Each query generates a new DatasourceFactory.
 There are 3 kinds of query defined though only 2 were used in the project. The 3 types are :
 1. normal query which fetches the articles from the webservice and populates the db.
 2. query that fetches the reviewed articles from the db from a previous session. This is used in the review screen to populate the list and gird views.(It does not make network call, fetches only from db).
@@ -143,22 +149,35 @@ There are 3 kinds of query defined though only 2 were used in the project. The 3
 The third query is not used in this project but I left it there as it would be a nice use case, just in case we want to add a filter to show only the liked articles in the review screen.
 
 Once the LiveData<PageList<ArticleDomainEntity> is received via the articlesListSource (DataSource.Factory backing the query 1) in the viewmodel, the SelectionFeatureFragment tries to populate the 
-viewpager2's adapter to render the view. Now there are two cases either there is no data immediately or the end of the data is reached.
-The BoundaryCallback handles these 2 cases via the onZeroitemLoaded and the onItemAtEndLoaded. Both cases triggers an API call action which is performed via
-ArticleService defined in the 'remotedata' layer. The BoundaryCallback is in the 'data' module which is a repository abstraction layer. 
+viewpager2's adapter to render the view. Now there are two cases:
+1. either there is no data immediately
+2. the end of the data is reached.
+The BoundaryCallback handles these 2 cases via the onZeroitemLoaded and the onItemAtEndLoaded. 
+Both cases triggers an API call action which is performed via ArticleService defined in the 'remotedata' layer. 
+The BoundaryCallback is in the 'data' module which is a repository abstraction layer. 
 It sets the RepositoryStateRelay to LOADING state so that the SelectionFeatureFragment in the 'feature' module can display the progressbar.
 The SelectionFeatureFragment handles this by setting the isLoading Observable in the viewmodel which is bound to the progressbar view in the layout file via data binding.
+
+
 Once the service call completes, the control comes back to the 'data' module which updates the result in the room db in 'localdb' module. 
-And then the network state is set to LOADED state so the ui layer ('feature' module) can stop the progressbar. At the same time, the updating of the result in the
-room db triggers an event in the Datasource listened via the livedata in the viewmodel and communicated to the observer in the SelectionFeatureFragment where a new paged list is submitted to the adapter.
+And then the network state is set to LOADED state so the ui layer ('feature' module) can stop the progressbar. 
+At the same time, the updating of the result in the room db triggers an event in the Datasource listened via the livedata in the viewmodel and communicated to the observer in the SelectionFeatureFragment where a new paged list is submitted to the adapter.
 The UI updates the viewpager2 adapter and the list is shown one image at a time.
+
 When the user clicks on an like/dislike, onClick listener is triggered. The data binding calls the onCicked method defined in the ClickListener class directly. 
-The onClick listener handles the like, dislike and the review button clicks. It calls the viewmodel's handleLikeDislike method to update the like counter displayed in the bottom.
+The onClick listener handles the like, dislike and the review button clicks. 
+It calls the viewmodel's handleLikeDislike method to update the like counter displayed in the bottom.
+
 On reaching the reviewCount or when the list is exhausted which ever happens first , "congrats" layout is displayed along with a review-button(star shaped button) to navigate to the review screen. 
+
 The onReview btn click event uses the navigation component to perform the navigation in the navhost fragment layout of the FeatureActivity. 
 The review screen displays the reviewed articles in the list and gridview layouts which are triggerd by the two buttons in the upper right corner of the review screen.
 Thanks to the navigation component, the whole navigation is controlled via the navigation graph xml file, by setting the appropriate popup action attributes so as to maintain a clean backstack, without any code. 
 The logic of not displaying the title in the grid layout is handled using the data binding, eliminating the need for a separate layout file for each mode(list/gird).
+
+
+
+
 I hope you understand my effort. Please feel free to reach out to me for any questions. 
 
 ## My email id is sunragav@gmail.com. Mobile: +49 15127928882 [Linkedin](https://www.linkedin.com/in/sunragav/)
