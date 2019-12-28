@@ -81,10 +81,6 @@ class SelectionFragment : Fragment() {
 
         binding.viewModel = viewModel
 
-
-
-
-
         initViewPager()
 
         initAdapter()
@@ -200,6 +196,7 @@ class SelectionFragment : Fragment() {
         viewModel.articlesListSource.removeObservers(this)
         viewModel.currentItem.removeObservers(this)
         disposable.dispose()
+        binding.clickListener = null
     }
 
 }

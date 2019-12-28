@@ -7,7 +7,6 @@ import com.sunragav.home24.domain.usecases.GetArticlesAction
 import com.sunragav.home24.localdata.dao.ArticlesDao
 import com.sunragav.home24.localdata.mappers.ArticleLocalDataMapper
 import io.reactivex.Completable
-import io.reactivex.Maybe
 import io.reactivex.Observable
 import javax.inject.Inject
 
@@ -32,7 +31,7 @@ class LocalRepositoryImpl @Inject constructor(
         return articlesDao.update(articleLocalDataMapper.to(articleEntity))
     }
 
-    override fun clearAllLikes(): Maybe<Int> {
+    override fun clearAllLikes(): Completable {
         return articlesDao.clearLikesFromArticles()
     }
 

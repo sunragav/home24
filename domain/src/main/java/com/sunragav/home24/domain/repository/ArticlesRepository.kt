@@ -4,7 +4,6 @@ import com.sunragav.home24.domain.models.ArticleDomainEntity
 import com.sunragav.home24.domain.usecases.GetArticlesAction
 import com.sunragav.home24.domain.usecases.GetArticlesAction.GetArticlesActionResult
 import io.reactivex.Completable
-import io.reactivex.Maybe
 import io.reactivex.Observable
 
 interface ArticlesRepository {
@@ -14,6 +13,6 @@ interface ArticlesRepository {
 
     fun updateArticle(articleDomainEntity: ArticleDomainEntity): Completable
 
-    fun clearAllLikes(): Maybe<Int>
+    fun clearAllLikes(): Completable
     fun clean()
 }
