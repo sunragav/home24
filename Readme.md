@@ -92,7 +92,7 @@ The project uses the famous uncle Bob's CLEAN architecture.
 9. utils - Kotlin library module. This is a small module for helper classes. It provides the BehaviorRelay wrapper singleton for tracking the repository state and errors and communicating the same across the modules
 	(android and non-android).
 	
-10. android-utils - Android library module. It provides the connectivity state monitoring Livedata which monitors the change of network availability. This live data is used in the 'feature-selection' and 'feature-review' modules to detect the change in the network state and act accordingly. The ConnectivityMonitorLiveData is a singleton injected via dagger to the Activity in the 'feature-home' modules.
+10. android-utils - Android library module. It provides the connectivity state monitoring Livedata which monitors the change of network availability. This live data is used in the 'feature-selection' and 'feature-review' modules to detect the change in the network state and act accordingly. The ConnectivityMonitorLiveData is a singleton injected via dagger to the FeatureActivity in the 'feature-selection' modules.
     
 	The project has been structured with scalability in mind. The feature modules has their own res and nav-graph so that the res folder is not bloated with too many resources to browse from.
 
