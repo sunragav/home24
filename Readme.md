@@ -102,7 +102,7 @@ app  (includes the UI test for the feature module and dagger dependency injectio
 feature-selection (contains the UI for the feature)
 feature-review (contains the UI for the feature)
 presentation (contains the viewmodel)
-android-utils (contains the connetivity state change helper)
+android-utils (contains the connectivity state change helper)
 localdata ( contains the roomdb. It has both instrumentation test and the unit tests)
 
 The following are the kotlin library modules:
@@ -154,7 +154,7 @@ On reaching the reviewCount or when the list is exhausted which ever happens fir
 The onReview btn click event uses the navigation component to perform the navigation in the navhost fragment layout of the FeatureActivity. 
 The review screen displays the reviewed articles in the list and gridview layouts which are triggerd by the two buttons in the upper right corner of the review screen.
 Thanks to the navigation component, the whole navigation is controlled via the navigation graph xml file, by setting the appropriate popup action attributes so as to maintain a clean backstack, without any code. 
-
+The logic of not displaying the title in the grid layout is handled using the data binding, eliminating the need for a separate layout file for each mode(list/gird).
 I hope you understand my effort. Please feel free to reach out to me for any questions. My email id is sunragav@gmail.com. Mobile: +49 15127928882
 Linkedin: https://www.linkedin.com/in/sunragav/
 
