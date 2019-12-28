@@ -36,6 +36,7 @@ import javax.inject.Inject
 
 
 class SelectionFragment : Fragment() {
+    private var prevState: RepositoryState = EMPTY
     @Inject
     lateinit var viewModelFactory: ArticlesViewModelFactory
 
@@ -130,11 +131,13 @@ class SelectionFragment : Fragment() {
                     ).show()
                 }
                 CONNECTED -> {
-                    Toast.makeText(
-                        activity,
-                        R.string.network_regained,
-                        Toast.LENGTH_LONG
-                    ).show()
+                    if (prevState == DISCONNECTED) {
+                        Toast.makeText(
+                            activity,
+                            R.string.network_regained,
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
                     if (viewModel.isLoading.get() == true) {
                         viewModel.getModels()
                         viewModel.canNavigate.value = true
@@ -156,8 +159,10 @@ class SelectionFragment : Fragment() {
                     }
                 }
             }
+            prevState = it
 
         }
+
         disposable.add(subscription)
     }
 

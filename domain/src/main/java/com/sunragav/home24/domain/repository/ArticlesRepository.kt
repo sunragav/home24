@@ -15,4 +15,5 @@ interface ArticlesRepository {
     fun updateArticle(articleDomainEntity: ArticleDomainEntity): Completable
 
     fun clearAllLikes(): Maybe<Int>
+    fun clean()
 }

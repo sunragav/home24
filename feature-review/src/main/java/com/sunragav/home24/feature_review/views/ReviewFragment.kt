@@ -86,7 +86,6 @@ class ReviewFragment : Fragment() {
             //itemAnimator = null
         }
         startListeningToRepoState()
-        initViewModel()
 
         initAdapter()
         initListPagedListObserver()
@@ -100,8 +99,6 @@ class ReviewFragment : Fragment() {
                 adapter = listPagedArticlesAdapter
                 layoutManager = listLayout
             }
-            viewModel.reviewedArticlesListSource.removeObservers(this)
-            initListPagedListObserver()
         }) {
             with(recyclerView) {
                 recycledViewPool.clear()
@@ -109,27 +106,18 @@ class ReviewFragment : Fragment() {
                 adapter = gridPagedArticlesAdapter
                 layoutManager = gridLayout
             }
-            viewModel.likedArticlesListSource.removeObservers(this)
-            initGridPagedListObserver()
         }
         return binding.root
     }
 
-    private fun initViewModel() {
-        viewModel.getReviewed()
-        viewModel.getLiked()
-        repositoryStateRelay.relay.accept(EMPTY)
-    }
-
-
     private fun initAdapter() {
-
+        val articleUIModelMapper = ArticleUIModelMapper()
         listPagedArticlesAdapter = PagedArticlesAdapter(
-            ArticleUIModelMapper(), viewModel
+            articleUIModelMapper, viewModel
         )
 
         gridPagedArticlesAdapter = PagedArticlesAdapter(
-            ArticleUIModelMapper(), viewModel
+            articleUIModelMapper, viewModel
         )
 
         //By default adapter is List view layout adapter
@@ -137,7 +125,7 @@ class ReviewFragment : Fragment() {
     }
 
     private fun initListPagedListObserver() {
-        viewModel.reviewedArticlesListSource.observe(this, Observer { pagedList ->
+        viewModel.getReviewed().observe(this, Observer { pagedList ->
             if (pagedList.size > 0) {
                 viewModel.isLoading.set(false)
                 listPagedArticlesAdapter.submitList(pagedList)
@@ -146,7 +134,7 @@ class ReviewFragment : Fragment() {
     }
 
     private fun initGridPagedListObserver() {
-        viewModel.likedArticlesListSource.observe(this, Observer { pagedList ->
+        viewModel.getLiked().observe(this, Observer { pagedList ->
             if (pagedList.size > 0) {
                 viewModel.isLoading.set(false)
                 gridPagedArticlesAdapter.submitList(pagedList)
@@ -199,10 +187,26 @@ class ReviewFragment : Fragment() {
         disposable.add(subscription)
     }
 
+    override fun onDestroyView() {
+        recyclerView.addOnAttachStateChangeListener(object :
+            View.OnAttachStateChangeListener {
+            override fun onViewAttachedToWindow(v: View) { // no-op
+            }
+
+            override fun onViewDetachedFromWindow(v: View) {
+                listPagedArticlesAdapter.submitList(null)
+                gridPagedArticlesAdapter.submitList(null)
+                recyclerView.adapter = null
+            }
+        })
+        super.onDestroyView()
+    }
+
+
     override fun onDetach() {
         super.onDetach()
-        viewModel.likedArticlesListSource.removeObservers(this)
-        viewModel.reviewedArticlesListSource.removeObservers(this)
+        viewModel.getLiked().removeObservers(this)
+        viewModel.getReviewed().removeObservers(this)
         disposable.dispose()
     }
 

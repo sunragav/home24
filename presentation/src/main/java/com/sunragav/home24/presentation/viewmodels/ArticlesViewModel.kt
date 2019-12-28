@@ -7,15 +7,16 @@ import androidx.paging.PagedList
 import com.sunragav.home24.domain.models.ArticleDomainEntity
 import com.sunragav.home24.domain.models.RepositoryState
 import com.sunragav.home24.domain.models.RepositoryState.Companion.DB_CLEARED
+import com.sunragav.home24.domain.models.RepositoryState.Companion.DB_ERROR
 import com.sunragav.home24.domain.models.RepositoryState.Companion.EMPTY
 import com.sunragav.home24.domain.models.RepositoryStateRelay
 import com.sunragav.home24.domain.qualifiers.Background
 import com.sunragav.home24.domain.qualifiers.ReviewCount
+import com.sunragav.home24.domain.usecases.CleanAction
 import com.sunragav.home24.domain.usecases.ClearAllLikesAction
 import com.sunragav.home24.domain.usecases.GetArticlesAction
 import com.sunragav.home24.domain.usecases.UpdateArticleAction
 import io.reactivex.Scheduler
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.coroutines.*
 import java.util.concurrent.TimeUnit
@@ -28,6 +29,7 @@ open class ArticlesViewModel @Inject internal constructor(
     private val getArticlesAction: GetArticlesAction,
     private val updateArticleAction: UpdateArticleAction,
     private val clearAllLikesAction: ClearAllLikesAction,
+    private val cleanAction: CleanAction,
     private val compositeDisposable: CompositeDisposable,
     private val repositoryStateRelay: RepositoryStateRelay,
     @Background private val background: Scheduler,
@@ -53,9 +55,9 @@ open class ArticlesViewModel @Inject internal constructor(
     val articlesListSource: LiveData<PagedList<ArticleDomainEntity>>
         get() = Transformations.switchMap(pagedListMediator) { it }
 
-    lateinit var reviewedArticlesListSource: LiveData<PagedList<ArticleDomainEntity>>
+    private lateinit var reviewedArticlesListSource: LiveData<PagedList<ArticleDomainEntity>>
 
-    lateinit var likedArticlesListSource: LiveData<PagedList<ArticleDomainEntity>>
+    private lateinit var likedArticlesListSource: LiveData<PagedList<ArticleDomainEntity>>
 
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main + viewModelJob
@@ -120,10 +122,8 @@ open class ArticlesViewModel @Inject internal constructor(
     }
 
     fun getReviewed(): LiveData<PagedList<ArticleDomainEntity>> {
-        if (::reviewedArticlesListSource.isInitialized.not())
             reviewedArticlesListSource =
                 with(getArticlesAction.buildUseCase(reviewedRequestParam)) {
-
                     LivePagedListBuilder(dataSource, pagingConfig)
                         .setBoundaryCallback(boundaryCallback)
                         .build()
@@ -133,7 +133,6 @@ open class ArticlesViewModel @Inject internal constructor(
     }
 
     fun getLiked(): LiveData<PagedList<ArticleDomainEntity>> {
-        if (::likedArticlesListSource.isInitialized.not())
             likedArticlesListSource =
                 with(getArticlesAction.buildUseCase(favoritesRequestParam)) {
                     LivePagedListBuilder(dataSource, pagingConfig)
@@ -147,12 +146,11 @@ open class ArticlesViewModel @Inject internal constructor(
     private fun clearAllLikes(executeTaskAfterLikesCleared: Callback? = null) {
         canNavigate.value = false
         clearAllLikesAction.buildUseCase()
-            .observeOn(AndroidSchedulers.mainThread())
-            .timeout(1000, TimeUnit.MILLISECONDS)
-            .onTerminateDetach()
+            .doOnError { reportRepoState(DB_ERROR) }
+            .doOnSuccess { reportRepoState(DB_CLEARED) }
+            .doOnComplete { reportRepoState(DB_CLEARED) }
             .doFinally {
-                reportDBState(DB_CLEARED)
-                getModels()
+                reportRepoState(EMPTY)
                 executeTaskAfterLikesCleared?.invoke()
             }
             .doOnSubscribe { compositeDisposable.add(it) }
@@ -221,16 +219,17 @@ open class ArticlesViewModel @Inject internal constructor(
                 postExecute.invoke()
             }
             .andThen {
-                reportDBState(RepositoryState.DB_UPDATED)
+                reportRepoState(RepositoryState.DB_UPDATED)
             }.subscribe()
     }
 
     override fun onCleared() {
         super.onCleared()
-        //compositeDisposable.dispose()
+        compositeDisposable.dispose()
+        cleanAction.execute()
     }
 
-    private fun reportDBState(repositoryState: RepositoryState) {
+    private fun reportRepoState(repositoryState: RepositoryState) {
         repositoryStateRelay.relay.accept(repositoryState)
     }
 

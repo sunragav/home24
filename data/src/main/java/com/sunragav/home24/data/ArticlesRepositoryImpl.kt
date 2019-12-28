@@ -48,6 +48,10 @@ class ArticlesRepositoryImpl @Inject constructor(
         return localRepository.clearAllLikes()
     }
 
+    override fun clean() {
+        disposable.dispose()
+    }
+
 
     inner class ArticlesBoundaryCallback(
         private val query: GetArticlesAction.Params
