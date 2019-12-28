@@ -180,6 +180,8 @@ class ReviewFragment : Fragment() {
                 recyclerView.adapter = null
             }
         })
+        binding.clickHandler = null
+        binding.unbind()
         super.onDestroyView()
     }
 
@@ -188,6 +190,7 @@ class ReviewFragment : Fragment() {
         super.onDetach()
         viewModel.getReviewed().removeObservers(this)
         disposable.dispose()
+
     }
 
 }

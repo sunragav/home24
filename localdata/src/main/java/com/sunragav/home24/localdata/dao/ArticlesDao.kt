@@ -4,7 +4,6 @@ import androidx.paging.DataSource
 import androidx.room.*
 import com.sunragav.home24.localdata.models.ArticleLocalData
 import io.reactivex.Completable
-import io.reactivex.Maybe
 import io.reactivex.Observable
 
 
@@ -39,5 +38,5 @@ interface ArticlesDao {
 
     @Query("UPDATE articles set is_flagged = 0, is_reviewed =0")
     //@Query("DELETE FROM articles")
-    fun clearLikesFromArticles():  Maybe<Int>
+    fun clearLikesFromArticles(): Completable
 }

@@ -8,18 +8,16 @@ import com.sunragav.home24.domain.models.ArticleDomainEntity
 import com.sunragav.home24.domain.models.RepositoryState
 import com.sunragav.home24.domain.models.RepositoryState.Companion.DB_CLEARED
 import com.sunragav.home24.domain.models.RepositoryState.Companion.DB_ERROR
+import com.sunragav.home24.domain.models.RepositoryState.Companion.DB_UPDATED
 import com.sunragav.home24.domain.models.RepositoryState.Companion.EMPTY
 import com.sunragav.home24.domain.models.RepositoryStateRelay
-import com.sunragav.home24.domain.qualifiers.Background
 import com.sunragav.home24.domain.qualifiers.ReviewCount
 import com.sunragav.home24.domain.usecases.CleanAction
 import com.sunragav.home24.domain.usecases.ClearAllLikesAction
 import com.sunragav.home24.domain.usecases.GetArticlesAction
 import com.sunragav.home24.domain.usecases.UpdateArticleAction
-import io.reactivex.Scheduler
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.coroutines.*
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
 
@@ -32,7 +30,6 @@ open class ArticlesViewModel @Inject internal constructor(
     private val cleanAction: CleanAction,
     private val compositeDisposable: CompositeDisposable,
     private val repositoryStateRelay: RepositoryStateRelay,
-    @Background private val background: Scheduler,
     @ReviewCount private val reviewCountStr: String
 ) : ViewModel(), CoroutineScope {
     companion object {
@@ -55,12 +52,11 @@ open class ArticlesViewModel @Inject internal constructor(
     val articlesListSource: LiveData<PagedList<ArticleDomainEntity>>
         get() = Transformations.switchMap(pagedListMediator) { it }
 
-    private lateinit var reviewedArticlesListSource: LiveData<PagedList<ArticleDomainEntity>>
-
-    private lateinit var likedArticlesListSource: LiveData<PagedList<ArticleDomainEntity>>
-
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main + viewModelJob
+
+    private lateinit var reviewedArticlesListSource: LiveData<PagedList<ArticleDomainEntity>>
+
 
 
     private val viewModelJob = SupervisorJob()
@@ -71,7 +67,6 @@ open class ArticlesViewModel @Inject internal constructor(
     private val reviewCount: Int = reviewCountStr.toInt()
 
     private var normalRequestParam = GetArticlesAction.Params(limit = LIMIT, reviewed = false)
-    private var favoritesRequestParam = GetArticlesAction.Params(flagged = true)
     private var reviewedRequestParam = GetArticlesAction.Params(reviewed = true)
     private val filterRequestLiveData = MutableLiveData<GetArticlesAction.Params>()
 
@@ -136,7 +131,6 @@ open class ArticlesViewModel @Inject internal constructor(
         canNavigate.value = false
         clearAllLikesAction.buildUseCase()
             .doOnError { reportRepoState(DB_ERROR) }
-            .doOnSuccess { reportRepoState(DB_CLEARED) }
             .doOnComplete { reportRepoState(DB_CLEARED) }
             .doFinally {
                 reportRepoState(EMPTY)
@@ -199,16 +193,13 @@ open class ArticlesViewModel @Inject internal constructor(
         postExecute: Callback
     ) {
         updateArticleAction.buildUseCase(articleDomainEntity)
-            .timeout(1000, TimeUnit.MILLISECONDS)
-            .onTerminateDetach()
             .doOnSubscribe {
                 compositeDisposable.add(it)
             }
-            .doFinally {
-                postExecute.invoke()
-            }
-            .andThen {
-                reportRepoState(RepositoryState.DB_UPDATED)
+            .doFinally(postExecute)
+            .doOnError { reportRepoState(DB_ERROR) }
+            .doOnComplete {
+                reportRepoState(DB_UPDATED)
             }.subscribe()
     }
 
@@ -221,6 +212,4 @@ open class ArticlesViewModel @Inject internal constructor(
     private fun reportRepoState(repositoryState: RepositoryState) {
         repositoryStateRelay.relay.accept(repositoryState)
     }
-
-
 }

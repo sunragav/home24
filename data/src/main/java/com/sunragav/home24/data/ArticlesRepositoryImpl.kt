@@ -12,7 +12,6 @@ import com.sunragav.home24.domain.repository.ArticlesRepository
 import com.sunragav.home24.domain.usecases.GetArticlesAction
 import com.sunragav.home24.domain.usecases.GetArticlesAction.GetArticlesActionResult
 import io.reactivex.Completable
-import io.reactivex.Maybe
 import io.reactivex.Observable
 import io.reactivex.Scheduler
 import io.reactivex.disposables.CompositeDisposable
@@ -44,7 +43,7 @@ class ArticlesRepositoryImpl @Inject constructor(
         return localRepository.update(articleDomainEntity)
     }
 
-    override fun clearAllLikes(): Maybe<Int> {
+    override fun clearAllLikes(): Completable {
         return localRepository.clearAllLikes()
     }
 

@@ -32,6 +32,7 @@ import com.sunragav.home24.presentation.factory.ArticlesViewModelFactory
 import com.sunragav.home24.presentation.viewmodels.ArticlesViewModel
 import dagger.android.support.AndroidSupportInjection
 import io.reactivex.disposables.CompositeDisposable
+import java.lang.ref.WeakReference
 import javax.inject.Inject
 
 
@@ -81,15 +82,11 @@ class SelectionFragment : Fragment() {
 
         binding.viewModel = viewModel
 
-
-
-
-
         initViewPager()
 
         initAdapter()
         binding.clickListener = ClickListener(
-            viewPager = viewPager,
+            viewPagerRef = WeakReference(viewPager),
             viewModel = viewModel
         )
 
@@ -200,6 +197,12 @@ class SelectionFragment : Fragment() {
         viewModel.articlesListSource.removeObservers(this)
         viewModel.currentItem.removeObservers(this)
         disposable.dispose()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        binding.clickListener = null
+        binding.unbind()
     }
 
 }
