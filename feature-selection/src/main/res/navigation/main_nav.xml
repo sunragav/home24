@@ -12,16 +12,13 @@
         <action
             android:id="@+id/action_startFragment_to_selectionFragment"
             app:destination="@id/selectionFragment"
-            app:enterAnim="@anim/nav_default_enter_anim"
-            app:exitAnim="@anim/nav_default_exit_anim"
-            app:launchSingleTop="true"
-            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
-            app:popExitAnim="@anim/nav_default_pop_exit_anim"
-            app:popUpTo="@+id/startFragment" />
-        <action
-            android:id="@+id/action_startFragment_to_selectionFragment2"
-            app:popUpTo="@+id/main_nav"
-            app:popUpToInclusive="true" />
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:launchSingleTop="false"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"
+            app:popUpTo="@+id/startFragment"
+            app:popUpToInclusive="false" />
     </fragment>
     <fragment
         android:id="@+id/selectionFragment"
@@ -31,11 +28,11 @@
         <action
             android:id="@+id/action_selectionFragment_to_reviewFragment"
             app:destination="@id/reviewFragment"
-            app:enterAnim="@anim/nav_default_enter_anim"
-            app:exitAnim="@anim/nav_default_exit_anim"
-            app:launchSingleTop="true"
-            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
-            app:popExitAnim="@anim/nav_default_pop_exit_anim"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:launchSingleTop="false"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"
             app:popUpTo="@+id/selectionFragment"
             app:popUpToInclusive="false" />
     </fragment>
@@ -44,9 +41,5 @@
         android:name="com.sunragav.home24.feature_review.views.ReviewFragment"
         android:label="ReviewFragment"
         tools:layout="@layout/fragment_review">
-        <action
-            android:id="@+id/action_reviewFragment_pop_including_startFragment"
-            app:popUpTo="@+id/selectionFragment"
-            app:popUpToInclusive="true" />
     </fragment>
 </navigation>
