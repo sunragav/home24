@@ -1,7 +1,11 @@
-The app starts with a splash screen followed by a screen with a start button. Clicking on the start button, displays a list of article images by consuming the home24 api. The user can click like or dislike button and on reaching a threshold (reviewCount) configured in the gradle.properties,
-the user will be presented with the review screen. In the review screen, the user can see all the items he reviewed(liked and disliked both with image and title)in a list view,
-or in a grid view ( with only images without title). The user can toggle between the list view and grid view as many no.of times he wants and when he press back he goes back to the start screen
-where he can start a fresh review again. To change the no. of articles in each review, you have to change the value of reviewCount in the gradle.properties file and rebuild the project.
+The app starts with a splash screen followed by a screen with a start button. Clicking on the start button, displays a list of article images by consuming the home24 api. 
+The user can click like or dislike button and on reaching a threshold (reviewCount) configured in the gradle.properties, the user will be presented with a overlay showing that he has completed the survey 
+and presents a button to go to the review screen. In the review screen, the user can see all the items he reviewed(liked and disliked both with image and title)in a list view,
+or in a grid view ( with only images without title). 
+The user can toggle between the list view and grid view as many no.of times he wants and when he press back he goes back to the selection screen which shows the congrats message again, the state at which
+the user left earlier from selection screen. On pressing back one more time will take him back to the start button screen where he can start a fresh review again. 
+
+To change the no. of articles in each review, you have to change the value of reviewCount in the gradle.properties file and rebuild the project.
 
 The project was developed and tested using Android studio 3.5.3.  
 It uses code generation libraries like Dagger2, Databinding, Room. So please kindly gradle-sync the project first and build it once. 
@@ -118,34 +122,37 @@ The application code flow:
 The app starts with a splash activity in the 'app' module  and after a delay launches the FeatureActivity in the 'feature-selection' module. 
 The activity then sets listeners to the connectivity changes to communicate to the other systems via the RepositoryStateRelay.
 It uses the navHostFragment of the navigation component to deal with these fragment transactions.
-The FeatureActivity sets the StartFragment as the starting screen. On clicking the start button, the selection screen is launched using navigation component.
-Selection fragment calls viewmodel's init() where all the likes in the db are cleared so that a fresh review can start.
+The FeatureActivity sets the StartFragment as the starting screen. On clicking the start button, viewmodel's init() is called which clears all the likes if any made in an earlier session.
+After clearing all the likes, the selection screen is launched using navigation component.
+Selection fragment subscribes to the articles list livedata of datasource and the livedata of currentItem.
 
-The SelectionFeatureFragment listens to the network state changes and as it receives the EMPTY state, it loads the datasource factory with the current query set. The default is to fetch from network, and then to update db which the pagedlist is listening to.
+The SelectionFeatureFragment listens to the network state changes and as it receives the EMPTY state, it loads the datasource factory with the current query set. 
+The default is to fetch from network, and then to update db which the pagedlist is listening to.
 The query is sent to viewmodel in the 'presentation' module, the viewmodel uses the GetArticlesListAction usecase from the 'domain' module.
 The GetArticlesListAction uses the ArticlesRepository defined in the 'data' module to get the DatasourceFactory and the BoundaryCallback necessary for generating
 the LiveData of Pagelist of ArticleDomainEntity to be displayed in the list view. The BoundaryCallback is defined in the 'data' module itself,
-where as the DatasourceFactory from the Room DB is defined in the 'localdata' module. Each query generates a new DatasourceFactory.
+where as the DatasourceFactory comes from the Room DB query and is defined in the 'localdata' module. Each query generates a new DatasourceFactory.
+There are 3 kinds of query defined though only 2 were used in the project. The 3 types are :
+1. normal query which fetches the articles from the webservice and populates the db.
+2. query that fetches the reviewed articles from the db from a previous session. This is used in the review screen to populate the list and gird views.(It does not make network call, fetches only from db).
+3. query that fetches only the liked articles. (It does not make a network call, fetches only from the db)
+The third query is not used in this project but I left it there as it would be a nice use case, just in case we want to add a filter to show only the liked articles in the review screen.
 
-Once the LiveData<PageList<ArticleDomainEntity> is received via the articlesListSource in the viewmodel, the SelectionFeatureFragment tries to populate the 
+Once the LiveData<PageList<ArticleDomainEntity> is received via the articlesListSource (DataSource.Factory backing the query 1) in the viewmodel, the SelectionFeatureFragment tries to populate the 
 viewpager2's adapter to render the view. Now there are two cases either there is no data immediately or the end of the data is reached.
 The BoundaryCallback handles these 2 cases via the onZeroitemLoaded and the onItemAtEndLoaded. Both cases triggers an API call action which is performed via
 ArticleService defined in the 'remotedata' layer. The BoundaryCallback is in the 'data' module which is a repository abstraction layer. 
 It sets the RepositoryStateRelay to LOADING state so that the SelectionFeatureFragment in the 'feature' module can display the progressbar.
-The SelectionFeatureFragment handles this by setting the isLoading Observable in the viewmodel which is bound to the progressbar view in the layout
-via data binding.
-Once the service call completes the control, comes back to the 'data' module which updates the result in the room db in 'localdb' module. 
+The SelectionFeatureFragment handles this by setting the isLoading Observable in the viewmodel which is bound to the progressbar view in the layout file via data binding.
+Once the service call completes, the control comes back to the 'data' module which updates the result in the room db in 'localdb' module. 
 And then the network state is set to LOADED state so the ui layer ('feature' module) can stop the progressbar. At the same time, the updating of the result in the
-room db triggers an event in the Datasource listened by the viewmodel via the livedata and communicated to the observer in the SelectionFeatureFragment
-with the new paged list. The UI updates the viewpager2 adapter and the list is shown one image at a time.
-When the user clicks on an like/dislike, onClick listener is triggered. The data binding calls the onCicked method defined in the
-ClickListener class class. 
+room db triggers an event in the Datasource listened via the livedata in the viewmodel and communicated to the observer in the SelectionFeatureFragment where a new paged list is submitted to the adapter.
+The UI updates the viewpager2 adapter and the list is shown one image at a time.
+When the user clicks on an like/dislike, onClick listener is triggered. The data binding calls the onCicked method defined in the ClickListener class directly. 
 The onClick listener handles the like, dislike and the review button clicks. It calls the viewmodel's handleLikeDislike method to update the like counter displayed in the bottom.
-The onClick uses the navigation component to perform the navigation in the navhost fragment layout ofthe FeatureActivity. 
-On reaching the reviewCount or when the list is exhausted which ever happens first , "congrats" layout is displayed along with a button to navigate to the review screen. This is  handled using the navigation component.
-
-
-
+On reaching the reviewCount or when the list is exhausted which ever happens first , "congrats" layout is displayed along with a review-button(star shaped button) to navigate to the review screen. 
+The onReview btn click event uses the navigation component to perform the navigation in the navhost fragment layout of the FeatureActivity. 
+The review screen displays the reviewed articles in the list and gridview layouts which are triggerd by the two buttons in the upper right corner of the review screen.
 
 I hope you understand my effort. Please feel free to reach out to me for any questions. My email id is sunragav@gmail.com. Mobile: +49 15127928882
 Linkedin: https://www.linkedin.com/in/sunragav/
