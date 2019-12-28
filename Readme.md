@@ -1,11 +1,14 @@
 The app starts with a splash screen followed by a screen with a start button. Clicking on the start button, displays a list of article images by consuming the home24 api. 
 The user can click like or dislike button and on reaching a threshold (reviewCount) configured in the gradle.properties, the user will be presented with a overlay showing that he has completed the survey 
-and presents a button to go to the review screen. In the review screen, the user can see all the items he reviewed(liked and disliked both with image and title)in a list view,
+and a button to go to the review screen. In the review screen, the user can see all the items he reviewed(liked and disliked both with image and title)in a list view,
 or in a grid view ( with only images without title). 
-The user can toggle between the list view and grid view as many no.of times he wants and when he press back he goes back to the selection screen which shows the congrats message again, the state at which
-the user left earlier from selection screen. On pressing back one more time will take him back to the start button screen where he can start a fresh review again. 
+The user can toggle between the list view and grid view as many no.of times he wants and when he presses back the app goes back to the selection screen which shows the congrats message again, the state at which
+the user left earlier from selection screen. On pressing back one more time, will take him back to the start button screen where he can start a fresh review again. 
+Every time the user clicks start button all the likes from the previous selection session will be cleared.
 
 To change the no. of articles in each review, you have to change the value of reviewCount in the gradle.properties file and rebuild the project.
+The build config in the app modules uses the gradle.properties to generated the BuildConfig class file with all the constants configured in the app.gradle file. The dagger2 injects the reviewCount constant
+to the other modules. It is injected in the viewmodel class.
 
 The project was developed and tested using Android studio 3.5.3.  
 It uses code generation libraries like Dagger2, Databinding, Room. So please kindly gradle-sync the project first and build it once. 
