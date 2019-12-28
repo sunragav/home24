@@ -16,7 +16,8 @@
             app:exitAnim="@anim/nav_default_exit_anim"
             app:launchSingleTop="true"
             app:popEnterAnim="@anim/nav_default_pop_enter_anim"
-            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+            app:popExitAnim="@anim/nav_default_pop_exit_anim"
+            app:popUpTo="@+id/startFragment" />
         <action
             android:id="@+id/action_startFragment_to_selectionFragment2"
             app:popUpTo="@+id/main_nav"
@@ -36,7 +37,7 @@
             app:popEnterAnim="@anim/nav_default_pop_enter_anim"
             app:popExitAnim="@anim/nav_default_pop_exit_anim"
             app:popUpTo="@+id/selectionFragment"
-            app:popUpToInclusive="true" />
+            app:popUpToInclusive="false" />
     </fragment>
     <fragment
         android:id="@+id/reviewFragment"
@@ -45,7 +46,7 @@
         tools:layout="@layout/fragment_review">
         <action
             android:id="@+id/action_reviewFragment_pop_including_startFragment"
-            app:popUpTo="@id/startFragment"
+            app:popUpTo="@+id/selectionFragment"
             app:popUpToInclusive="true" />
     </fragment>
 </navigation>

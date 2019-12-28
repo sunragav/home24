@@ -99,7 +99,7 @@ open class ArticlesViewModel @Inject internal constructor(
         }
     }
 
-    fun init() {
+    fun init(postInitExecute: () -> Unit) {
         isReadyToReview.set(false)
         isLoading.set(true)
         isUndoShowable.set(false)
@@ -112,6 +112,7 @@ open class ArticlesViewModel @Inject internal constructor(
         clearAllLikes {
             canNavigate.value = true
             repositoryStateRelay.relay.accept(EMPTY)
+            postInitExecute.invoke()
         }
     }
 

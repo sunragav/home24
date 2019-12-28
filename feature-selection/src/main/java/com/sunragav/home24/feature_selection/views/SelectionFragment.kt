@@ -167,7 +167,6 @@ class SelectionFragment : Fragment() {
     }
 
     private fun initViewModel() {
-        viewModel.init()
 
         viewModel.currentItem.observe(this, Observer {
             if (it == 0) viewModel.isUndoShowable.set(false)
