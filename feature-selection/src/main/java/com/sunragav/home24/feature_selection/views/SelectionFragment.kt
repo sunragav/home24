@@ -172,9 +172,11 @@ class SelectionFragment : Fragment() {
     }
 
     private fun initViewPager() {
-        viewPager.isUserInputEnabled = false
-        viewPager.currentItem = 0
-        viewPager.setPageTransformer(customDepthTransformation)
+        with(viewPager) {
+            isUserInputEnabled = false
+            currentItem = 0
+            setPageTransformer(customDepthTransformation)
+        }
     }
 
     private fun initAdapter() {
