@@ -43,7 +43,7 @@ class ReviewFragment : Fragment() {
 
     lateinit var viewModel: ArticlesViewModel
 
-    lateinit var binding: FragmentReviewBinding
+    private var binding: FragmentReviewBinding? = null
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var listPagedArticlesAdapter: PagedArticlesAdapter
@@ -73,7 +73,7 @@ class ReviewFragment : Fragment() {
                 ViewModelProviders.of(it, viewModelFactory).get(ArticlesViewModel::class.java)
         }
 
-        recyclerView = binding.rvArticlesList
+        recyclerView = binding?.rvArticlesList!!
         val gridLayout = GridLayoutManager(activity, 2)
         val listLayout = GridLayoutManager(activity, 1)
 
@@ -89,7 +89,7 @@ class ReviewFragment : Fragment() {
         initAdapter()
         initListPagedListObserver()
 
-        binding.clickHandler = ClickListener(viewModel, {
+        binding?.clickHandler = ClickListener(viewModel, {
             with(recyclerView) {
                 recycledViewPool.clear()
                 scrollToPosition(0)
@@ -102,7 +102,7 @@ class ReviewFragment : Fragment() {
                 layoutManager = gridLayout
             }
         }
-        return binding.root
+        return binding?.root
     }
 
     private fun initAdapter() {
@@ -180,8 +180,9 @@ class ReviewFragment : Fragment() {
                 recyclerView.adapter = null
             }
         })
-        binding.clickHandler = null
-        binding.unbind()
+        binding?.clickHandler = null
+        binding?.unbind()
+        binding = null
         super.onDestroyView()
     }
 
@@ -190,6 +191,7 @@ class ReviewFragment : Fragment() {
         super.onDetach()
         viewModel.getReviewed().removeObservers(this)
         disposable.dispose()
+        viewModel.clean()
 
     }
 

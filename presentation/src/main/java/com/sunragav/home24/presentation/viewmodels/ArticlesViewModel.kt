@@ -28,7 +28,6 @@ open class ArticlesViewModel @Inject internal constructor(
     private val updateArticleAction: UpdateArticleAction,
     private val clearAllLikesAction: ClearAllLikesAction,
     private val cleanAction: CleanAction,
-    private val compositeDisposable: CompositeDisposable,
     private val repositoryStateRelay: RepositoryStateRelay,
     @ReviewCount private val reviewCountStr: String
 ) : ViewModel(), CoroutineScope {
@@ -57,7 +56,7 @@ open class ArticlesViewModel @Inject internal constructor(
 
     private lateinit var reviewedArticlesListSource: LiveData<PagedList<ArticleDomainEntity>>
 
-
+    private var compositeDisposable: CompositeDisposable? = null
 
     private val viewModelJob = SupervisorJob()
     private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
@@ -95,6 +94,7 @@ open class ArticlesViewModel @Inject internal constructor(
     }
 
     fun init(postInitExecute: () -> Unit) {
+        compositeDisposable = CompositeDisposable()
         isReadyToReview.set(false)
         isLoading.set(true)
         isUndoShowable.set(false)
@@ -136,7 +136,7 @@ open class ArticlesViewModel @Inject internal constructor(
                 reportRepoState(EMPTY)
                 executeTaskAfterLikesCleared?.invoke()
             }
-            .doOnSubscribe { compositeDisposable.add(it) }
+            .doOnSubscribe { compositeDisposable?.add(it) }
             .subscribe()
     }
 
@@ -194,9 +194,9 @@ open class ArticlesViewModel @Inject internal constructor(
     ) {
         updateArticleAction.buildUseCase(articleDomainEntity)
             .doOnSubscribe {
-                compositeDisposable.add(it)
+                compositeDisposable?.add(it)
             }
-            .doFinally(postExecute)
+            .doFinally { postExecute.invoke() }
             .doOnError { reportRepoState(DB_ERROR) }
             .doOnComplete {
                 reportRepoState(DB_UPDATED)
@@ -205,8 +205,13 @@ open class ArticlesViewModel @Inject internal constructor(
 
     override fun onCleared() {
         super.onCleared()
-        compositeDisposable.dispose()
+        clean()
+    }
+
+
+    fun clean() {
         cleanAction.execute()
+        compositeDisposable?.dispose()
     }
 
     private fun reportRepoState(repositoryState: RepositoryState) {

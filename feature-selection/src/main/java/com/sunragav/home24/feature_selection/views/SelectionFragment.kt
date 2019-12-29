@@ -49,11 +49,11 @@ class SelectionFragment : Fragment() {
 
     private lateinit var viewModel: ArticlesViewModel
 
-    private lateinit var pagedArticlesAdapter: PagedArticlesAdapter
+    private var pagedArticlesAdapter: PagedArticlesAdapter? = null
 
-    private lateinit var viewPager: ViewPager2
+    private var viewPager: ViewPager2? = null
 
-    private lateinit var binding: FragmentSelectionBinding
+    private var binding: FragmentSelectionBinding? = null
 
     @Inject
     lateinit var customDepthTransformation: Viewpager2CustomDepthTransformation
@@ -78,15 +78,15 @@ class SelectionFragment : Fragment() {
             container,
             false
         )
-        viewPager = binding.vpArticles
+        viewPager = binding?.vpArticles
 
-        binding.viewModel = viewModel
+        binding?.viewModel = viewModel
 
         initViewPager()
 
         initAdapter()
-        binding.clickListener = ClickListener(
-            viewPagerRef = WeakReference(viewPager),
+        binding?.clickListener = ClickListener(
+            viewPagerRef = WeakReference(viewPager!!),
             viewModel = viewModel
         )
 
@@ -95,7 +95,7 @@ class SelectionFragment : Fragment() {
         startListeningToRepoState()
 
 
-        return binding.root
+        return binding?.root
     }
 
     private fun startListeningToRepoState() {
@@ -106,7 +106,7 @@ class SelectionFragment : Fragment() {
                     viewModel.isLoading.set(false)
                 }
                 DISCONNECTED -> {
-                    val count = pagedArticlesAdapter.currentList?.size ?: 0
+                    val count = pagedArticlesAdapter?.currentList?.size ?: 0
                     if (count == 0) {
                         viewModel.canNavigate.value = false
                     }
@@ -149,7 +149,7 @@ class SelectionFragment : Fragment() {
                     ).show()
                 }
                 EMPTY -> {
-                    val count = pagedArticlesAdapter.currentList?.size ?: 0
+                    val count = pagedArticlesAdapter?.currentList?.size ?: 0
                     if (count == 0) {
                         viewModel.isLoading.set(true)
                         viewModel.getModels()
@@ -172,7 +172,7 @@ class SelectionFragment : Fragment() {
     }
 
     private fun initViewPager() {
-        with(viewPager) {
+        with(viewPager!!) {
             isUserInputEnabled = false
             currentItem = 0
             setPageTransformer(customDepthTransformation)
@@ -183,13 +183,13 @@ class SelectionFragment : Fragment() {
         pagedArticlesAdapter = PagedArticlesAdapter(
             ArticleUIModelMapper()
         )
-        viewPager.adapter = pagedArticlesAdapter
+        viewPager?.adapter = pagedArticlesAdapter
         viewModel.articlesListSource.observe(this, Observer {
             if (it.size > 0) {
                 repositoryStateRelay.relay.accept(UI_LOADED)
                 viewModel.isLoading.set(false)
-                pagedArticlesAdapter.submitList(it)
-                viewModel.articlesCount.postValue(pagedArticlesAdapter.itemCount)
+                pagedArticlesAdapter?.submitList(it)
+                viewModel.articlesCount.postValue(pagedArticlesAdapter?.itemCount)
             }
         })
     }
@@ -203,8 +203,12 @@ class SelectionFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        binding.clickListener = null
-        binding.unbind()
+        binding?.clickListener = null
+        binding?.unbind()
+        binding = null
+        viewPager = null
+        pagedArticlesAdapter = null
+        viewModel.clean()
     }
 
 }

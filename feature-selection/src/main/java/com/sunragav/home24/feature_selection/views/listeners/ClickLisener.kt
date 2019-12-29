@@ -52,4 +52,8 @@ class ClickListener(
         val navController = view.findNavController()
         navController.navigate(action)
     }
+
+    fun clean() {
+        viewPagerRef.clear()
+    }
 }
