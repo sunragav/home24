@@ -1,4 +1,4 @@
-package com.sunragav.home24.feature_selection.viewpager.bindings
+package com.sunragav.home24.android_utils.bindings
 
 import android.graphics.Bitmap
 import android.view.View
@@ -10,13 +10,27 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DecodeFormat
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
-import com.sunragav.feature_selection.R
+import com.sunragav.home24.android_utils.R
+
 
 @BindingConversion
 fun convertBooleanToVisibility(visible: Boolean): Int {
     return if (visible) View.VISIBLE else View.GONE
 }
 
+@BindingAdapter("layout_height")
+fun setLayoutHeight(view: View, height: Float) {
+    val layoutParams = view.layoutParams
+    layoutParams.height = height.toInt()
+    view.layoutParams = layoutParams
+}
+
+@BindingAdapter("layout_width")
+fun setLayoutWidth(view: View, width: Float) {
+    val layoutParams = view.layoutParams
+    layoutParams.width = width.toInt()
+    view.layoutParams = layoutParams
+}
 
 @BindingConversion
 fun convertStringToText(field: ObservableField<String>): String {
@@ -32,7 +46,12 @@ fun setImageUrl(view: ImageView?, field: ObservableField<String>?) {
 
 @BindingAdapter("bigImageUrl")
 fun setBigImageUrl(view: ImageView?, field: ObservableField<String>?) {
-    setImageUrl(view, field, 1100, 1500)
+    setImageUrl(
+        view,
+        field,
+        1100,
+        1500
+    )
 
 }
 

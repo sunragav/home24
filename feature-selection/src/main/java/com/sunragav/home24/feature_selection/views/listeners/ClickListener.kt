@@ -12,12 +12,12 @@ class ClickListener(
     private val viewPagerRef: WeakReference<ViewPager2>,
     private val viewModel: ArticlesViewModel
 ) {
-    fun onLiked(view: View) {
+    fun onLiked(@Suppress("UNUSED_PARAMETER") view: View) {
 
         navigateToNext(liked = true)
     }
 
-    fun onUndo(view: View) {
+    fun onUndo(@Suppress("UNUSED_PARAMETER") view: View) {
         val viewPager = viewPagerRef.get()!!
         if (viewPager.currentItem > 0) {
             viewPager.currentItem--
@@ -43,11 +43,11 @@ class ClickListener(
     }
 
 
-    fun onDisliked(view: View) {
+    fun onDisliked(@Suppress("UNUSED_PARAMETER") view: View) {
         navigateToNext(liked = false)
     }
 
-    fun onReview(view: View) {
+    fun onReview(@Suppress("UNUSED_PARAMETER") view: View) {
         val action = SelectionFragmentDirections.actionSelectionFragmentToReviewFragment()
         val navController = view.findNavController()
         navController.navigate(action)

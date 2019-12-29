@@ -44,8 +44,8 @@ dependencies {
     implementation project(':presentation')
     implementation project(':domain')
     implementation project(':utils')
-    implementation project(':android-utils')
-    implementation project(':feature-review')
+    api project(':android-utils')
+    api project(':feature-review')
 
 
 

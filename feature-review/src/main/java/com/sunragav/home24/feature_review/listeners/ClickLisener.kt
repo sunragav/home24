@@ -8,12 +8,12 @@ class ClickListener(
     private val listViewUIHandler: () -> Unit,
     private val gridViewUIHandler: () -> Unit
 ) {
-    fun onListView(view: View) {
+    fun onListView(@Suppress("UNUSED_PARAMETER") view: View) {
         viewModel.isListView.set(true)
         listViewUIHandler.invoke()
     }
 
-    fun onGridView(view: View) {
+    fun onGridView(@Suppress("UNUSED_PARAMETER") view: View) {
         viewModel.isListView.set(false)
         gridViewUIHandler.invoke()
     }
