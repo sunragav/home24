@@ -45,7 +45,7 @@ dependencies {
     implementation project(':domain')
     implementation project(':utils')
     api project(':android-utils')
-    api project(':feature-review')
+    implementation project(':feature-review')
 
 
 

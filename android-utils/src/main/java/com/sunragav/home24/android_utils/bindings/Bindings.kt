@@ -40,7 +40,7 @@ fun convertStringToText(field: ObservableField<String>): String {
 
 @BindingAdapter("imageUrl")
 fun setImageUrl(view: ImageView?, field: ObservableField<String>?) {
-    setImageUrl(view, field, 220, 300)
+    setImageUrl(view, field, 600, 400)
 }
 
 
