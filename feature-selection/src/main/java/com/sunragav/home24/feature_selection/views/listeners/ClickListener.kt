@@ -4,8 +4,7 @@ import android.view.View
 import androidx.appcompat.widget.AppCompatButton
 import androidx.navigation.findNavController
 import androidx.viewpager2.widget.ViewPager2
-import com.sunragav.feature_selection.R
-import com.sunragav.home24.android_utils.animation.animateBtn
+import com.sunragav.home24.android_utils.animation.animate
 import com.sunragav.home24.feature_selection.viewpager.adapter.PagedArticlesAdapter
 import com.sunragav.home24.feature_selection.views.SelectionFragmentDirections
 import com.sunragav.home24.presentation.viewmodels.ArticlesViewModel
@@ -16,14 +15,17 @@ class ClickListener(
     private val viewModel: ArticlesViewModel
 ) {
     fun onLiked(view: View) {
-        animateBtn(view as AppCompatButton) {
-
-            navigateToNext(liked = true)
+        var clicked = false
+        (view as AppCompatButton).animate {
+            if (clicked.not()) {
+                clicked = true
+                navigateToNext(liked = true)
+            }
         }
     }
 
     fun onUndo(view: View) {
-        animateBtn(view as AppCompatButton) {
+        (view as AppCompatButton).animate {
 
             val viewPager = viewPagerRef.get()!!
             if (viewPager.currentItem > 0) {
@@ -52,18 +54,16 @@ class ClickListener(
 
 
     fun onDisliked(view: View) {
-        animateBtn(view as AppCompatButton) {
+        (view as AppCompatButton).animate {
             navigateToNext(liked = false)
         }
     }
 
     fun onReview(view: View) {
-        animateBtn(view as AppCompatButton) {
+        (view as AppCompatButton).animate {
             val navController = view.findNavController()
             val action = SelectionFragmentDirections.actionSelectionFragmentToReviewFragment()
-            if (navController.currentDestination?.id == R.id.selectionFragment) {
-                navController.navigate(action)
-            }
+            navController.navigate(action)
         }
     }
 }
