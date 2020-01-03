@@ -56,8 +56,6 @@
                     android:layout_height="match_parent"
                     android:scaleType="fitCenter"
                     app:imageUrl="@{binder.imageUrl}"
-                    tools:layout_editor_absoluteX="219dp"
-                    tools:layout_editor_absoluteY="8dp"
                     tools:srcCompat="@tools:sample/avatars" />
             </androidx.cardview.widget.CardView>
 

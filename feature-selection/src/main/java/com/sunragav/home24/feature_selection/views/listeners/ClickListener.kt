@@ -1,8 +1,11 @@
 package com.sunragav.home24.feature_selection.views.listeners
 
 import android.view.View
+import androidx.appcompat.widget.AppCompatButton
 import androidx.navigation.findNavController
 import androidx.viewpager2.widget.ViewPager2
+import com.sunragav.feature_selection.R
+import com.sunragav.home24.android_utils.animation.animateBtn
 import com.sunragav.home24.feature_selection.viewpager.adapter.PagedArticlesAdapter
 import com.sunragav.home24.feature_selection.views.SelectionFragmentDirections
 import com.sunragav.home24.presentation.viewmodels.ArticlesViewModel
@@ -12,16 +15,21 @@ class ClickListener(
     private val viewPagerRef: WeakReference<ViewPager2>,
     private val viewModel: ArticlesViewModel
 ) {
-    fun onLiked(@Suppress("UNUSED_PARAMETER") view: View) {
+    fun onLiked(view: View) {
+        animateBtn(view as AppCompatButton) {
 
-        navigateToNext(liked = true)
+            navigateToNext(liked = true)
+        }
     }
 
-    fun onUndo(@Suppress("UNUSED_PARAMETER") view: View) {
-        val viewPager = viewPagerRef.get()!!
-        if (viewPager.currentItem > 0) {
-            viewPager.currentItem--
-            viewModel.currentItem.value = viewPager.currentItem
+    fun onUndo(view: View) {
+        animateBtn(view as AppCompatButton) {
+
+            val viewPager = viewPagerRef.get()!!
+            if (viewPager.currentItem > 0) {
+                viewPager.currentItem--
+                viewModel.currentItem.value = viewPager.currentItem
+            }
         }
     }
 
@@ -43,17 +51,19 @@ class ClickListener(
     }
 
 
-    fun onDisliked(@Suppress("UNUSED_PARAMETER") view: View) {
-        navigateToNext(liked = false)
+    fun onDisliked(view: View) {
+        animateBtn(view as AppCompatButton) {
+            navigateToNext(liked = false)
+        }
     }
 
-    fun onReview(@Suppress("UNUSED_PARAMETER") view: View) {
-        val action = SelectionFragmentDirections.actionSelectionFragmentToReviewFragment()
-        val navController = view.findNavController()
-        navController.navigate(action)
-    }
-
-    fun clean() {
-        viewPagerRef.clear()
+    fun onReview(view: View) {
+        animateBtn(view as AppCompatButton) {
+            val navController = view.findNavController()
+            val action = SelectionFragmentDirections.actionSelectionFragmentToReviewFragment()
+            if (navController.currentDestination?.id == R.id.selectionFragment) {
+                navController.navigate(action)
+            }
+        }
     }
 }
