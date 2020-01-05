@@ -215,7 +215,7 @@ The logic of not displaying the title in the grid layout is handled using the da
 
 ## The size comparison between after and before progaurd
 
-![size comparison](https://i.imgur.com/pBO9UOd.jpg)
+![size comparison](https://i.imgur.com/3nInBPS.jpg)
 
 
 
