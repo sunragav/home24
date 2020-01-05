@@ -7,6 +7,14 @@ apply plugin: 'kotlin-kapt'
 
 
 android {
+    signingConfigs {
+        release {
+            storeFile file('..\\home24.jks')
+            storePassword 'home24'
+            keyAlias = 'home24'
+            keyPassword 'home24'
+        }
+    }
     compileSdkVersion rootProject.ext.compileSdkVersion
     defaultConfig {
         applicationId "com.sunragav.home24.articles"
@@ -36,8 +44,11 @@ android {
             buildConfigField("String", "REVIEW_COUNT", "\"${reviewCount}\"")
             buildConfigField("String", "BASE_URL", "\"${baseUrl}\"")
 
-            minifyEnabled false
+            shrinkResources true
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            versionNameSuffix = '1.0'
+            signingConfig signingConfigs.release
         }
     }
 }
@@ -113,8 +124,8 @@ dependencies {
 
     implementation "com.jakewharton.rxrelay2:rxrelay:$rxRelayVersion"
 
-    implementation "org.jetbrains.kotlin:kotlin-reflect:1.1.0"
-    testImplementation 'junit:junit:4.12'
+    implementation "org.jetbrains.kotlin:kotlin-reflect:1.3.61"
+    testImplementation 'junit:junit:4.13'
     androidTestImplementation "org.mockito:mockito-core:$mockitoVersion"
     androidTestImplementation "androidx.test:runner:$testRunnerVersion"
     androidTestImplementation "androidx.test:rules:$testRulesVersion"
