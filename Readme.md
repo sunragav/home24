@@ -181,7 +181,46 @@ The logic of not displaying the title in the grid layout is handled using the da
 ### Data binding
 ![Data binding](https://i.imgur.com/0X2l9r4.png)
 ### Navigation graph
-![Navigation graph](https://i.imgur.com/IxHK0Md.gif)
+![Navigation graph](https://i.imgur.com/Yk4AhPJ.jpg)
+
+# NOTE: THE RELEASE SIGNING KEY HAS BEEN ADDED JUST FOR THE SAKE OF COMPLETION AND DEMONSTRATION. BECAUSE PROGAURD RULES ARE APPLIED ONLY ON THE RELEASE FLAVOR. THE SIGNING KEY SHOULD BE HIDDEN AND KEPT SECRET FROM OTHERS IN A SECURED PLACE AND ACCESSED VIA CI/CD PROCESS.
+
+## Progaurd custom keep rules
+
+```
+-keep class com.sunragav.home24.remotedata.models.DataWrapper { <fields>; }
+-keep class com.sunragav.home24.remotedata.models.Embedded { <fields>; }
+-keep class com.sunragav.home24.remotedata.models.ArticleRemoteData { <fields>; }
+-keep class com.sunragav.home24.remotedata.models.ArticleRemoteData { <fields>; }
+-keep class com.sunragav.home24.remotedata.models.Media { <fields>; }
+-keepnames class com.sunragav.home24.localdata.models.ArticleLocalData { <fields>; }
+
+-keep class * extends androidx.room.RoomDatabase
+-dontwarn androidx.room.paging.**
+```
+
+## The keep rules are respected by the progaurd and the below image shows how the remotedata module's POJO models are retained without obfuscation:
+
+![Progaurd keep rules](https://i.imgur.com/AAQKC43.jpg)
+
+
+## The app without optimizations ( shrinking and progaurd rules) APK size is 5.5 MB and the download size is 5 MB
+
+![Without optimizations](https://i.imgur.com/Db0iqRx.jpg)
+
+## The app after the applicaton of necessary progaurd rules the APK size is 3 MB and the download size is 2.4 MB
+
+![After optimizations](https://i.imgur.com/uRu2EMF.jpg)
+
+## The size comparison between after and before progaurd
+
+![size comparison](https://i.imgur.com/pBO9UOd.jpg)
+
+
+
+By the way, because I have used Android studio 3.5.3 for the development,  the shrinking+obfuscation using progaurd rules are directly done using the R8 compiler to output the dex. There is no intermediate optimized java byte code generated like it was previously when using D8 compiler.
+
+![R8](https://i.imgur.com/gaW51ac.jpg)
 
 
 
