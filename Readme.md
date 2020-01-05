@@ -181,7 +181,8 @@ The logic of not displaying the title in the grid layout is handled using the da
 ### Data binding
 ![Data binding](https://i.imgur.com/0X2l9r4.png)
 ### Navigation graph
-![Navigation graph](https://i.imgur.com/Yk4AhPJ.jpg)
+
+![Navigation graph](https://i.imgur.com/O1NBW6O.jpg)
 
 # NOTE: THE RELEASE SIGNING KEY HAS BEEN ADDED JUST FOR THE SAKE OF COMPLETION AND DEMONSTRATION. BECAUSE PROGAURD RULES ARE APPLIED ONLY ON THE RELEASE FLAVOR. THE SIGNING KEY SHOULD BE HIDDEN AND KEPT SECRET FROM OTHERS IN A SECURED PLACE AND ACCESSED VIA CI/CD PROCESS.
 
