@@ -213,7 +213,7 @@ The logic of not displaying the title in the grid layout is handled using the da
 
 ![After optimizations](https://i.imgur.com/uRu2EMF.jpg)
 
-## The size comparison between after and before progaurd
+## The size comparison between un-optimized and optimized apk
 
 ![size comparison](https://i.imgur.com/3nInBPS.jpg)
 
