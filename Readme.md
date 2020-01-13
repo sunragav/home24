@@ -105,19 +105,19 @@ The relay is basically pushed from 2 places:
 2. ArticlesBoundaryCallback - sets the LOADING/LOADED/ERROR state based on the service API call status. 
 
 ## The following are the android modules:
-app  (includes the UI test for the feature module and dagger dependency injection modules and the application component)
-feature-selection (contains the UI for the feature)
-feature-review (contains the UI for the feature)
-presentation (contains the viewmodel)
-android-utils (contains the connectivity state change helper)
-localdata ( contains the roomdb. It has both instrumentation test and the unit tests)
+1. app  (includes the UI test for the feature module and dagger dependency injection modules and the application component)
+2. feature-selection (contains the UI for the feature)
+3. feature-review (contains the UI for the feature)
+4. presentation (contains the viewmodel)
+5. android-utils (contains the connectivity state change helper and android utils)
+6. localdata ( contains the roomdb. It has both instrumentation test and the unit tests)
 
 ## The following are the kotlin library modules:
-domain (contains the use cases. It has the unit tests covering all the use cases)
-local ( It is an implementation of the repository pattern. It supplies data to the domain with out revealing the source of the data. It has unit tests.)
-remotedata ( It is the service layer implemented using the retrofit and okhttp library. 
+1. domain (contains the use cases. It has the unit tests covering all the use cases)
+2. data ( It is an implementation of the repository pattern. It supplies data to the domain with out revealing the source of the data. It has unit tests.)
+3. remotedata ( It is the service layer implemented using the retrofit and okhttp library. 
             The okhttp has apiinterceptor and the http logging interceptor. It has unit tests for all the apis it exposes to the data layer)
-utils (Contains the utility functions and the Mapper interface which is used in the other layers to convert the models from one layer specific type to another)
+4. utils (Contains the utility functions and the Mapper interface which is used in the other layers to convert the models from one layer specific type to another)
 
 I have used the RXJava and Rx BehaviorRelay to communicate between the android and non-android modules.
 
